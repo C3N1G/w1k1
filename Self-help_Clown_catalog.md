@@ -127,6 +127,8 @@ Table of Contents
   * [dynelf](#dynelf)
   * [one\_gadget use](#one_gadget-use)
   * [stack migrate](#stack-migrate)
+    * [介绍](#介绍-10)
+    * [leave指令](#leave指令)
   * [vsyscall trick](#vsyscall-trick)
   * [chunk extend and overlapping](#chunk-extend-and-overlapping)
   * [unlink](#unlink)
@@ -141,26 +143,26 @@ Table of Contents
   * [realloc trick](#realloc-trick)
   * [setcontext trick](#setcontext-trick)
   * [fix the symbol table](#fix-the-symbol-table)
-    * [介绍](#介绍-10)
+    * [介绍](#介绍-11)
     * [符号表](#符号表)
     * [剥离符号表](#剥离符号表)
     * [恢复符号表](#恢复符号表)
     * [参考](#参考-10)
 * [工具篇](#工具篇)
   * [ROPgadget](#ropgadget-1)
-    * [介绍](#介绍-11)
+    * [介绍](#介绍-12)
     * [安装](#安装)
     * [使用](#使用)
   * [Ropper](#ropper-1)
-    * [介绍](#介绍-12)
+    * [介绍](#介绍-13)
     * [安装](#安装-1)
     * [使用](#使用-1)
   * [one\_gadget](#one_gadget)
-    * [介绍](#介绍-13)
+    * [介绍](#介绍-14)
     * [安装](#安装-2)
     * [使用](#使用-2)
   * [seccomp\-tools](#seccomp-tools)
-    * [介绍](#介绍-14)
+    * [介绍](#介绍-15)
     * [安装](#安装-3)
     * [使用](#使用-3)
   * [LibcSearcher](#libcsearcher)
@@ -175,7 +177,9 @@ Table of Contents
 * [研究篇](#研究篇)
   * [format string vuln attack \.got](#format-string-vuln-attack-got)
 
-
+>   本文谨献给我最爱的羊羊
+>
+>   <img src="Self-help_Clown.assets/QQ图片20220331215019-16487346685612.jpg" alt="QQ图片20220331215019" style="zoom: 33%;" />
 
 # 基础篇
 
@@ -2953,6 +2957,12 @@ o.interactive()
 
 
 ## stack migrate
+
+### 介绍
+
+在做ret2libc这种需要溢出很多字节的题型的时候, 会遇到一种情况, 就是溢出的字节只够覆盖到函数返回地址, 再多的就填充不了了, 这时候就需要借助stack migrate(栈迁移)技巧
+
+### leave指令
 
 
 
