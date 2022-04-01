@@ -129,14 +129,11 @@ Table of Contents
   * [stack migrate](#stack-migrate)
     * [介绍](#介绍-10)
     * [leave指令](#leave指令)
-<<<<<<< HEAD
     * [栈迁移](#栈迁移)
       * [Exploit](#exploit-12)
     * [栈劫持](#栈劫持)
     * [实战](#实战-8)
     * [参考](#参考-10)
-=======
->>>>>>> 745dfd26e8047f6588c22a08a5445ecb2acb3693
   * [vsyscall trick](#vsyscall-trick)
   * [chunk extend and overlapping](#chunk-extend-and-overlapping)
   * [unlink](#unlink)
@@ -155,11 +152,7 @@ Table of Contents
     * [符号表](#符号表)
     * [剥离符号表](#剥离符号表)
     * [恢复符号表](#恢复符号表)
-<<<<<<< HEAD
     * [参考](#参考-11)
-=======
-    * [参考](#参考-10)
->>>>>>> 745dfd26e8047f6588c22a08a5445ecb2acb3693
 * [工具篇](#工具篇)
   * [ROPgadget](#ropgadget-1)
     * [介绍](#介绍-12)
@@ -182,11 +175,7 @@ Table of Contents
   * [2021 蓝帽杯](#2021-蓝帽杯)
     * [slient](#slient)
       * [分析](#分析-1)
-<<<<<<< HEAD
       * [Exploit](#exploit-13)
-=======
-      * [Exploit](#exploit-12)
->>>>>>> 745dfd26e8047f6588c22a08a5445ecb2acb3693
   * [2021 长城杯](#2021-长城杯)
     * [K1ng\_in\_h3Ap\_I](#k1ng_in_h3ap_i)
       * [分析](#分析-2)
@@ -2984,7 +2973,6 @@ o.interactive()
 
 ### leave指令
 
-<<<<<<< HEAD
 在具体分析栈迁移技巧前, 我们需要来看一下leave指令, 这条指令是该技巧的核心
 
 leave指令主要化分两步操作, 以x86为例
@@ -3214,9 +3202,6 @@ o.interactive()
 -   https://www.cnblogs.com/max1z/p/15299000.html
 -   https://wiki.mrskye.cn/Pwn/stackoverflow/%E6%A0%88%E8%BF%81%E7%A7%BB/%E6%A0%88%E8%BF%81%E7%A7%BB/
 -   https://www.mrskye.cn/archives/f3d2f4dc/
-=======
-
->>>>>>> 745dfd26e8047f6588c22a08a5445ecb2acb3693
 
 ## vsyscall trick
 
