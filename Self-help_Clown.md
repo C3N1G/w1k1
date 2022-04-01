@@ -2789,6 +2789,7 @@ o.interactive()
 
 ### leave指令
 
+<<<<<<< HEAD:Self-help_Clown.md
 在具体分析栈迁移技巧前, 我们需要来看一下leave指令, 这条指令是该技巧的核心
 
 leave指令主要化分两步操作, 以x86为例
@@ -2820,6 +2821,8 @@ int main() {
 push ebp
 mov ebp, esp
 ```
+=======
+>>>>>>> 745dfd26e8047f6588c22a08a5445ecb2acb3693:自救指南-Clown版.md
 
 刚好是leave的逆操作, 这一头一尾的操作刚好维持了栈的平衡, 让fun函数的ret指令刚好可以返回call指令压入栈的函数返回地址
 
