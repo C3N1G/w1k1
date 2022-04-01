@@ -2833,7 +2833,7 @@ mov ebp, esp
 leave -> ret -> leave -> ret -> ...
 ```
 
-![image-20220401203136833](Self-help_Clown.assets\image-20220401203136833.png)
+![2324348349832498394](Self-help_Clown.assets/2324348349832498394.png)
 
 第一次执行leave会将0x61616161弹到ebp寄存器中
 
