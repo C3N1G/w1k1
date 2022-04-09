@@ -656,7 +656,107 @@ $ docker rm NAMES/ID -f
 
 ## Python入门
 
+## Pwn远程环境搭建
 
+### socat
+
+socat一条指令就行
+
+```sh
+$ socat tcp4-listen:[port],reuseaddr,fork exec:[elf]
+```
+
+port是你要映射到的端口, elf是你要映射的程序
+
+![screenshots](Self-help_Clown.assets/screenshots-16494729779271.gif)
+
+但是这种搭建方法有个问题, 就是没有环境隔离, 人家拿到shell就是你服务器的shell, 权限太高了
+
+![screenshots](Self-help_Clown.assets/screenshots-16494732408713.gif)
+
+如果心怀不轨就可能出现很大的问题
+
+上述的命令是没有加后台执行的, 会造成一个后果就是退出当前终端, socat也就直接停止运行了
+
+![screenshots](Self-help_Clown.assets/screenshots-16494793362211.gif)
+
+但是可以加后台运行命令
+
+```sh
+$ socat tcp4-listen:[port],reuseaddr,fork exec:[elf] &
+```
+
+最后的&就是后台运行, 而且不能直接叉掉ssh终端, 需要用exit指令退出, 否则这个进程也会跟着退出
+
+![screenshots](Self-help_Clown.assets/screenshots-16494851399201.gif)
+
+### ctf_xinetd
+
+>   GitHub: https://github.com/Eadom/ctf_xinetd
+
+这个项目是一个师傅写的, 主要就是用docker将题和真机环境隔离开, 这样就不会危及到真机, 这种部署方式一次只能布置一个
+
+主要讲几个可能要修改的配置
+
+-   ctf.xinetd
+
+![image-20220409142448287](Self-help_Clown.assets/image-20220409142448287.png)
+
+port是docker中的端口, 这里的"pwn"其实是你题目的名字
+
+-   Dockerfile
+
+![image-20220409142617801](Self-help_Clown.assets/image-20220409142617801.png)
+
+第一个是镜像环境, 根据需要来设置, 不如还可以设置为ubuntu:16.04, 最后一个EXPOSE是docker的端口
+
+配置修改完就可以进行部署了, 先将flag和题目放置到bin目录下, 然后执行
+
+```sh
+$ docker build -t "题目名称"
+```
+
+这样题目镜像就创建好了, 最后就可以起容器了
+
+```sh
+$ docker run -d -p "0.0.0.0:pub_port:docker_port" -h "题目名称" --name="题目名称" 题目名称
+```
+
+pub_port为需要映射到真机的端口, docker_port是docker的端口
+
+做一个实例来看
+
+![screenshots](Self-help_Clown.assets/screenshots-16494868994491.gif)
+
+### pwn_deploy_chroot
+
+>   GitHub: https://github.com/giantbranch/pwn_deploy_chroot
+
+该项目是基于ctf_xinetd, 但是更加安全, 更加自动化, 可以一次性布置多道题目, 而且自动生成flag
+
+首先需要安装docker-compose
+
+```sh
+$ apt-get install docker-compose
+```
+
+然后把需要布置的题目放到bin目录下, 执行初始化脚本
+
+```sh
+$ python initialize.py
+```
+
+这个初始化脚本会生成题目对应的端口和flag信息, 然后备份到flags.txt中, 注意端口都是从10000开始的
+
+最后直接docker-compose起环境
+
+```sh
+$ docker-compose up --build -d
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-16494949671393.gif)
+
+题目端口都备份到了flags.txt中
 
 # 原理篇
 
@@ -1599,7 +1699,9 @@ o.interactive()
 
 ### 介绍
 
-格式化字符串漏洞算是一种比较常见的漏洞，而且这种漏洞影响还是挺大的，可以造成任意读和任意写的效果，格式化字符串漏洞主要是依靠printf函数来实现的函数
+格式化字符串漏洞算是一种比较常见的漏洞，而且这种漏洞影响还是挺大的，可以造成任意读和任意写的效果，格式化字符串漏洞主要是依靠printf函数来实现的函数, 为什么会造成格式化字符串漏洞?
+
+因为printf的第一个参数是我们可以控制输入的, 这就造成可以在第一个参数里面输入我们想要的任意格式化控制符
 
 ### printf 基础
 
@@ -3273,7 +3375,7 @@ gdb调试来看一下, 在scanf处设下断点
 
 ### 爆破canary
 
-
+爆破canary是下下之策, 而且只是对于x86程序来说, 爆破出来的概率大概为1/0xffffff, 所以一般不建议来爆破
 
 ### SSP leak
 
@@ -3301,6 +3403,8 @@ gdb调试来看一下, 在scanf处设下断点
 -   https://www.tuicool.com/articles/qYbYrqe
 -   https://www.elttam.com/blog/playing-with-canaries/
 
+## x86绕过ecx
+
 
 
 ## dynelf
@@ -3308,6 +3412,8 @@ gdb调试来看一下, 在scanf处设下断点
 
 
 ## one_gadget use
+
+### 介绍
 
 
 
@@ -3981,6 +4087,14 @@ A获取系统调用号, 如果等于execve的系统调用号的话就跳转到KI
 
 
 
+## patchelf
+
+
+
+## socat
+
+
+
 ## IDA插件
 
 ### keypatch
@@ -4335,6 +4449,10 @@ int main() {
     scanf("%48s", string);
     if(regex(string)) {
         printf(string);
+    }
+    scanf("%48s", string);
+    if(regex(string)) {
+            printf("done\n");
     }
     return 0;
 }
